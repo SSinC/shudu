@@ -227,7 +227,7 @@ typedef enum {
         case UIGestureRecognizerStateEnded:{
             
             if(_dragDirection == dragUp){
-            if (_progress >0.8) {
+            if (_progress >0.7) {
                  _viewPresentedType = viewPresentedTypeDown;
                 [UIView animateWithDuration:0.5
                                       delay:0.0
