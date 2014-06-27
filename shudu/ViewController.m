@@ -140,11 +140,9 @@ typedef enum {
     _borderColors = @[  [UIColor colorWithWhite:0.7 alpha:1],
                         [UIColor colorWithWhite:0.7 alpha:1],
                         [UIColor colorWithWhite:0.7 alpha:1],
-                        [UIColor colorWithWhite:0.7 alpha:1],
                         [UIColor colorWithWhite:0.7 alpha:1]
                         ];
     _images = @[[UIImage imageNamed:@"icon_plist_webexball"],
-                [UIImage imageNamed:@"icon_plist_webexball"],
                 [UIImage imageNamed:@"icon_plist_webexball"],
                 [UIImage imageNamed:@"icon_plist_webexball"],
                 [UIImage imageNamed:@"icon_plist_webexball"]];
@@ -202,34 +200,39 @@ typedef enum {
 #pragma mark - Show
 - (void)showItems:(id)sender
 {
-    if(_itemsShowed) return;
-    _itemsShowed = YES;
-    [_items enumerateObjectsUsingBlock:^(calloutItemView *view, NSUInteger idx, BOOL *stop) {
-//        view.layer.transform = CATransform3DMakeScale(0.1, 0.1, 1);
-        view.alpha = 0;
-        CGFloat y = view.center.y;
-//        view.center =CGPointMake(view.center.x, view.center.y - 30);
-        view.originalBackgroundColor = [UIColor clearColor];
-        view.layer.borderWidth = 1.5f;
+    if(_itemsShowed){
+        [self dismissItems];
+    }else{
+        _itemsShowed = YES;
+        [_button setStyle:kFRDLivelyButtonStyleCircleClose animated:YES];
+        [_items enumerateObjectsUsingBlock:^(calloutItemView *view, NSUInteger idx, BOOL *stop) {
+    //        view.layer.transform = CATransform3DMakeScale(0.1, 0.1, 1);
+            view.alpha = 0;
+            CGFloat y = view.center.y;
+    //        view.center =CGPointMake(view.center.x, view.center.y - 30);
+            view.originalBackgroundColor = [UIColor clearColor];
+            view.layer.borderWidth = 1.5f;
+            
+            [self showWithView:view idx:idx initDelay:0.1 centerY:y];
+        }];
         
-        [self showWithView:view idx:idx initDelay:0.1 centerY:y];
-    }];
-    
-    _lastText1Alpha = _text1.alpha;
-    _lastTextAlpha = _text.alpha;
-    _lastHeaderAlpha = _header.alpha;
-    _lastTitleAlpha = _title.alpha;
-    [UIView animateWithDuration:0.5 animations:^{
-        _text1.alpha *= 0.2;
-        _text.alpha  *= 0.2;
-        _title.alpha *= 0.2;
-        _header.alpha *= 0.2;
-    }];
+        _lastText1Alpha = _text1.alpha;
+        _lastTextAlpha = _text.alpha;
+        _lastHeaderAlpha = _header.alpha;
+        _lastTitleAlpha = _title.alpha;
+        [UIView animateWithDuration:0.5 animations:^{
+            _text1.alpha *= 0.2;
+            _text.alpha  *= 0.2;
+            _title.alpha *= 0.2;
+            _header.alpha *= 0.2;
+        }];
+    }
 }
 
 - (void)dismissItems
 {
     _itemsShowed = NO;
+    [_button setStyle:kFRDLivelyButtonStyleCirclePlus animated:YES];
     [_items enumerateObjectsUsingBlock:^(calloutItemView *view, NSUInteger idx, BOOL *stop) {
         //        view.layer.transform = CATransform3DMakeScale(0.1, 0.1, 1);
         CGFloat y = view.center.y;
