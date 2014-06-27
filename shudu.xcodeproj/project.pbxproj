@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F6129AC7195D16180033F3B9 /* uiElements.m in Sources */ = {isa = PBXBuildFile; fileRef = F6129AC6195D16180033F3B9 /* uiElements.m */; };
+		F6129ADA195D1A650033F3B9 /* FRDLivelyButton.m in Sources */ = {isa = PBXBuildFile; fileRef = F6129AD9195D1A650033F3B9 /* FRDLivelyButton.m */; };
 		F6B1FE1F195AA1A70078015D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B1FE1E195AA1A70078015D /* Foundation.framework */; };
 		F6B1FE21195AA1A70078015D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B1FE20195AA1A70078015D /* CoreGraphics.framework */; };
 		F6B1FE23195AA1A70078015D /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B1FE22195AA1A70078015D /* UIKit.framework */; };
@@ -20,6 +22,17 @@
 		F6B1FE43195AA1A70078015D /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B1FE22195AA1A70078015D /* UIKit.framework */; };
 		F6B1FE4B195AA1A70078015D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F6B1FE49195AA1A70078015D /* InfoPlist.strings */; };
 		F6B1FE4D195AA1A70078015D /* shuduTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F6B1FE4C195AA1A70078015D /* shuduTests.m */; };
+		F6D3DC33195D3A660089B1B8 /* burger.png in Resources */ = {isa = PBXBuildFile; fileRef = F6D3DC2B195D3A660089B1B8 /* burger.png */; };
+		F6D3DC34195D3A660089B1B8 /* burger@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F6D3DC2C195D3A660089B1B8 /* burger@2x.png */; };
+		F6D3DC35195D3A660089B1B8 /* gear.png in Resources */ = {isa = PBXBuildFile; fileRef = F6D3DC2D195D3A660089B1B8 /* gear.png */; };
+		F6D3DC36195D3A660089B1B8 /* gear@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F6D3DC2E195D3A660089B1B8 /* gear@2x.png */; };
+		F6D3DC37195D3A660089B1B8 /* globe.png in Resources */ = {isa = PBXBuildFile; fileRef = F6D3DC2F195D3A660089B1B8 /* globe.png */; };
+		F6D3DC38195D3A660089B1B8 /* globe@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F6D3DC30195D3A660089B1B8 /* globe@2x.png */; };
+		F6D3DC39195D3A660089B1B8 /* profile.png in Resources */ = {isa = PBXBuildFile; fileRef = F6D3DC31195D3A660089B1B8 /* profile.png */; };
+		F6D3DC3A195D3A660089B1B8 /* profile@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F6D3DC32195D3A660089B1B8 /* profile@2x.png */; };
+		F6D3DC3C195D3C3E0089B1B8 /* btn_wifi.png in Resources */ = {isa = PBXBuildFile; fileRef = F6D3DC3B195D3C3E0089B1B8 /* btn_wifi.png */; };
+		F6D3DC3E195D3C4A0089B1B8 /* icon_Plist_TP.png in Resources */ = {isa = PBXBuildFile; fileRef = F6D3DC3D195D3C4A0089B1B8 /* icon_Plist_TP.png */; };
+		F6D3DC40195D3C560089B1B8 /* icon_plist_webexball.png in Resources */ = {isa = PBXBuildFile; fileRef = F6D3DC3F195D3C560089B1B8 /* icon_plist_webexball.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -33,6 +46,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F6129AC5195D16180033F3B9 /* uiElements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = uiElements.h; sourceTree = "<group>"; };
+		F6129AC6195D16180033F3B9 /* uiElements.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = uiElements.m; sourceTree = "<group>"; };
+		F6129AD8195D1A650033F3B9 /* FRDLivelyButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FRDLivelyButton.h; sourceTree = "<group>"; };
+		F6129AD9195D1A650033F3B9 /* FRDLivelyButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FRDLivelyButton.m; sourceTree = "<group>"; };
 		F6B1FE1B195AA1A70078015D /* shudu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = shudu.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6B1FE1E195AA1A70078015D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		F6B1FE20195AA1A70078015D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -51,6 +68,17 @@
 		F6B1FE48195AA1A70078015D /* shuduTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "shuduTests-Info.plist"; sourceTree = "<group>"; };
 		F6B1FE4A195AA1A70078015D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F6B1FE4C195AA1A70078015D /* shuduTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = shuduTests.m; sourceTree = "<group>"; };
+		F6D3DC2B195D3A660089B1B8 /* burger.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = burger.png; sourceTree = "<group>"; };
+		F6D3DC2C195D3A660089B1B8 /* burger@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "burger@2x.png"; sourceTree = "<group>"; };
+		F6D3DC2D195D3A660089B1B8 /* gear.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gear.png; sourceTree = "<group>"; };
+		F6D3DC2E195D3A660089B1B8 /* gear@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "gear@2x.png"; sourceTree = "<group>"; };
+		F6D3DC2F195D3A660089B1B8 /* globe.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = globe.png; sourceTree = "<group>"; };
+		F6D3DC30195D3A660089B1B8 /* globe@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "globe@2x.png"; sourceTree = "<group>"; };
+		F6D3DC31195D3A660089B1B8 /* profile.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = profile.png; sourceTree = "<group>"; };
+		F6D3DC32195D3A660089B1B8 /* profile@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "profile@2x.png"; sourceTree = "<group>"; };
+		F6D3DC3B195D3C3E0089B1B8 /* btn_wifi.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = btn_wifi.png; sourceTree = "<group>"; };
+		F6D3DC3D195D3C4A0089B1B8 /* icon_Plist_TP.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_Plist_TP.png; sourceTree = "<group>"; };
+		F6D3DC3F195D3C560089B1B8 /* icon_plist_webexball.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_plist_webexball.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,6 +142,10 @@
 				F6B1FE2E195AA1A70078015D /* AppDelegate.m */,
 				F6B1FE36195AA1A70078015D /* ViewController.h */,
 				F6B1FE37195AA1A70078015D /* ViewController.m */,
+				F6129AC5195D16180033F3B9 /* uiElements.h */,
+				F6129AC6195D16180033F3B9 /* uiElements.m */,
+				F6129AD8195D1A650033F3B9 /* FRDLivelyButton.h */,
+				F6129AD9195D1A650033F3B9 /* FRDLivelyButton.m */,
 				F6B1FE39195AA1A70078015D /* Images.xcassets */,
 				F6B1FE25195AA1A70078015D /* Supporting Files */,
 			);
@@ -127,6 +159,17 @@
 				F6B1FE27195AA1A70078015D /* InfoPlist.strings */,
 				F6B1FE2A195AA1A70078015D /* main.m */,
 				F6B1FE2C195AA1A70078015D /* shudu-Prefix.pch */,
+				F6D3DC2B195D3A660089B1B8 /* burger.png */,
+				F6D3DC2C195D3A660089B1B8 /* burger@2x.png */,
+				F6D3DC2D195D3A660089B1B8 /* gear.png */,
+				F6D3DC2E195D3A660089B1B8 /* gear@2x.png */,
+				F6D3DC2F195D3A660089B1B8 /* globe.png */,
+				F6D3DC30195D3A660089B1B8 /* globe@2x.png */,
+				F6D3DC31195D3A660089B1B8 /* profile.png */,
+				F6D3DC32195D3A660089B1B8 /* profile@2x.png */,
+				F6D3DC3B195D3C3E0089B1B8 /* btn_wifi.png */,
+				F6D3DC3D195D3C4A0089B1B8 /* icon_Plist_TP.png */,
+				F6D3DC3F195D3C560089B1B8 /* icon_plist_webexball.png */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -226,7 +269,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				F6B1FE3A195AA1A70078015D /* Images.xcassets in Resources */,
+				F6D3DC37195D3A660089B1B8 /* globe.png in Resources */,
+				F6D3DC38195D3A660089B1B8 /* globe@2x.png in Resources */,
+				F6D3DC36195D3A660089B1B8 /* gear@2x.png in Resources */,
+				F6D3DC3A195D3A660089B1B8 /* profile@2x.png in Resources */,
+				F6D3DC39195D3A660089B1B8 /* profile.png in Resources */,
+				F6D3DC35195D3A660089B1B8 /* gear.png in Resources */,
+				F6D3DC3E195D3C4A0089B1B8 /* icon_Plist_TP.png in Resources */,
+				F6D3DC34195D3A660089B1B8 /* burger@2x.png in Resources */,
+				F6D3DC3C195D3C3E0089B1B8 /* btn_wifi.png in Resources */,
 				F6B1FE29195AA1A70078015D /* InfoPlist.strings in Resources */,
+				F6D3DC33195D3A660089B1B8 /* burger.png in Resources */,
+				F6D3DC40195D3C560089B1B8 /* icon_plist_webexball.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -247,6 +301,8 @@
 			files = (
 				F6B1FE38195AA1A70078015D /* ViewController.m in Sources */,
 				F6B1FE2F195AA1A70078015D /* AppDelegate.m in Sources */,
+				F6129AC7195D16180033F3B9 /* uiElements.m in Sources */,
+				F6129ADA195D1A650033F3B9 /* FRDLivelyButton.m in Sources */,
 				F6B1FE2B195AA1A70078015D /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -446,6 +502,7 @@
 				F6B1FE52195AA1A70078015D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		F6B1FE53195AA1A70078015D /* Build configuration list for PBXNativeTarget "shuduTests" */ = {
 			isa = XCConfigurationList;
@@ -454,6 +511,7 @@
 				F6B1FE55195AA1A70078015D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
