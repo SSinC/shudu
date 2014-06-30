@@ -34,6 +34,7 @@ typedef enum {
     UIView *_itemsView;
     
     UIView *_contentView;
+    UIImageView *_imageView;
     
     float _progress;
     float _initalSelfCenterY;
@@ -95,8 +96,9 @@ typedef enum {
 //    _backgroundView.layer.shadowRadius = 10;
 //    _backgroundView.layer.shadowColor = [UIColor blackColor].CGColor;
 //    _backgroundView.layer.shadowOffset = CGSizeMake(-3, 3);
+    _imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 185, 100, 100)];
     
-    _title = [[UILabel alloc] initWithFrame:CGRectMake(30, 150, 250, 120)];
+    _title = [[UILabel alloc] initWithFrame:CGRectMake(35, 150, 240, 120)];
     [_title setText:@"25%"];
     [_title setTextColor:[UIColor blackColor]];
     _title.font = [UIFont boldSystemFontOfSize:110];
@@ -104,13 +106,14 @@ typedef enum {
     _title.textAlignment = NSTextAlignmentLeft;
     [_backgroundView addSubview:_title];
     
-    _text1 = [[UILabel alloc] initWithFrame:CGRectMake(30, 250, 230, 80)];
+    _text1 = [[UILabel alloc] initWithFrame:CGRectMake(35, 235, 230, 80)];
     _text1.numberOfLines = 3;
     [_text1 setText:@"Sthewrh sf465thwrh yrthje6 ujfdgf sdhgr\nwegsfd yuytdh esrh54 5gfgergfs gfdgr\negsfd"];
     [_text1 setTextColor:[UIColor blackColor]];
     _text1.font = [UIFont boldSystemFontOfSize:13];
     //    [labelCity setFont:[UIFont fontWithName:@"HelveticaNeue-UltraLight" size:25]];
     [_backgroundView addSubview:_text1];
+    [_backgroundView addSubview:_imageView];
     
     [_contentView addSubview:_backgroundView];
     [_contentView addSubview:_frontView];
@@ -218,12 +221,15 @@ typedef enum {
 }
 
 - (BOOL)infoFromNetwork:(NSDictionary *)info
-{
+{    
     dispatch_async(dispatch_get_main_queue(), ^{
-        //        viewContainer.weatherInfoDetailView.dataItem  = viewContainer.weatherDataItem;
+        _imageView.image = info[@"image"];
+        _title.frame = CGRectMake(110, 150, 200, 120);
+        _text1.frame = CGRectMake(115, 215, 180, 100);
         [_title setText:info[@"title"]];
-        _title.font = [UIFont boldSystemFontOfSize:25];
+        _title.font = [UIFont boldSystemFontOfSize:20];
         _title.numberOfLines = 3;
+        _text1.numberOfLines = 2;
         [_text1 setText:info[@"url"]];
     });
     return YES;

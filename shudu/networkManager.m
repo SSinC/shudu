@@ -67,7 +67,31 @@
                                }];
     }
 }
-
+/*
+jsonData {
+    "date" : "20140630",
+    "stories" : [
+                 {
+                     "id" : 4002269,
+                     "title" : "烫头发用的几百上千的药水，真的值那些价钱吗？",
+                     "share_url" : "http:\/\/daily.zhihu.com\/story\/4002269",
+                     "type" : 0,
+                     "ga_prefix" : "063016",
+                     "images" : [
+                                 "http:\/\/pic1.zhimg.com\/5de1d6f7bea81f74f11f2463f6498449.jpg"
+                                 ]
+                 },
+                 {
+                     "id" : 4003846,
+                     "title" : "合并和收购最大的区别是：听起来比较好听",
+                     "share_url" : "http:\/\/daily.zhihu.com\/story\/4003846",
+                     "type" : 0,
+                     "ga_prefix" : "063015",
+                     "images" : [
+                                 "http:\/\/pic4.zhimg.com\/406e22ffff01de476f85481728d0a2b1.jpg"
+                                 ]
+                 },
+ */
 - (BOOL)getNetworkInfo:(NSString *)URLString
 {
     if(![CheckNetwork isExistenceNetwork]) return NO;
@@ -104,18 +128,21 @@
         NSDictionary *json1 = [array objectAtIndex:0];
         NSString *title = [json1 objectForKey:@"title"];
 //        [title encodeForURLWithEncoding:NSUTF8StringEncoding];
-        NSString *url = [json1 objectForKey:@"share_url"];
+        NSString *stroyUrl = [json1 objectForKey:@"share_url"];
 //        url = [url substringFromIndex:29];
-        url = [url stringByReplacingOccurrencesOfString:@"\\" withString:@""];
+        stroyUrl = [stroyUrl stringByReplacingOccurrencesOfString:@"\\" withString:@""];
+        NSString *imageUrl = [[[json1 objectForKey:@"images"] objectAtIndex:0] stringByReplacingOccurrencesOfString:@"\\" withString:@""];
         
-        NSLog(@"url:%@",url);
-        NSLog(@"1title:%@",title);
+        NSLog(@"imageUrl:%@",imageUrl);
         
         NSDictionary *sendDick;
         NSArray      *sendArray;
         
+        NSData *imageData=[NSData dataWithContentsOfURL:[NSURL URLWithString:imageUrl]];
+        UIImage *img=[UIImage imageWithData:imageData];
+        
 //        [strongSelf handleData:json1 toDick:sendDick array:sendArray];
-        sendDick = @{@"title":title,@"url":url};
+        sendDick = @{@"title":title,@"url":stroyUrl,@"image":img};
         if (strongSelf.delegate && [strongSelf.delegate respondsToSelector:@selector(infoFromNetwork:)]) {
             _sendWeatherInfoCompleted = [strongSelf.delegate infoFromNetwork:sendDick];
         }
