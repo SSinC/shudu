@@ -411,7 +411,7 @@ typedef enum {
                                     options:UIViewAnimationOptionCurveEaseInOut
                                  animations:^{
                                      _backgroundView.frame = CGRectMake(0, -130, CGRectGetWidth(_backgroundView.frame), CGRectGetHeight(_backgroundView.frame));
-                                      _frontView.frame = CGRectMake(0, 110, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds));
+                                      _frontView.frame = CGRectMake(0, 130, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds));
                                      _backgroundView.alpha = 0.2;
                                      _headerView.alpha = 0.0;
                                  } completion:^(BOOL finished) {
