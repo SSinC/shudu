@@ -96,7 +96,7 @@ typedef enum {
 //    _backgroundView.layer.shadowColor = [UIColor blackColor].CGColor;
 //    _backgroundView.layer.shadowOffset = CGSizeMake(-3, 3);
     
-    _title = [[UILabel alloc] initWithFrame:CGRectMake(30, 150, 250, 80)];
+    _title = [[UILabel alloc] initWithFrame:CGRectMake(30, 150, 250, 120)];
     [_title setText:@"25%"];
     [_title setTextColor:[UIColor blackColor]];
     _title.font = [UIFont boldSystemFontOfSize:110];
@@ -104,7 +104,7 @@ typedef enum {
     _title.textAlignment = NSTextAlignmentLeft;
     [_backgroundView addSubview:_title];
     
-    _text1 = [[UILabel alloc] initWithFrame:CGRectMake(30, 230, 230, 80)];
+    _text1 = [[UILabel alloc] initWithFrame:CGRectMake(30, 250, 230, 80)];
     _text1.numberOfLines = 3;
     [_text1 setText:@"Sthewrh sf465thwrh yrthje6 ujfdgf sdhgr\nwegsfd yuytdh esrh54 5gfgergfs gfdgr\negsfd"];
     [_text1 setTextColor:[UIColor blackColor]];
@@ -194,7 +194,39 @@ typedef enum {
                                                     action:@selector(handleTap:)];
     [_contentView addGestureRecognizer:tapGestureRecognizer];
     
+    double delayInSeconds = 1.0;
+    __weak id wself = self;
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+    dispatch_after(popTime, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        ViewController *strongSelf = wself;
+        [strongSelf onApplicationFinishedLaunching];
+    });
+}
 
+#pragma mark - Lazy Loading
+- (void)onApplicationFinishedLaunching
+{
+    NSLog(@"onApplicationFinishedLaunching");
+    /*************************************
+     Netwokr weather instance
+     *************************************/
+    networkManager *weatherInstance = [networkManager sharedInstance];
+    weatherInstance.delegate = self;
+    [weatherInstance getNetworkInfo:@"http://news-at.zhihu.com/api/3/news/latest"];
+    //http://news-at.zhihu.com/api/3/news/hot
+//    [self addScrollView];
+}
+
+- (BOOL)infoFromNetwork:(NSDictionary *)info
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        //        viewContainer.weatherInfoDetailView.dataItem  = viewContainer.weatherDataItem;
+        [_title setText:info[@"title"]];
+        _title.font = [UIFont boldSystemFontOfSize:25];
+        _title.numberOfLines = 3;
+        [_text1 setText:info[@"url"]];
+    });
+    return YES;
 }
 
 #pragma mark - Show
@@ -243,7 +275,7 @@ typedef enum {
         [self dismissWithView:view idx:idx initDelay:0.5 centerY:y];
     }];
     
-    [UIView animateWithDuration:0.5 animations:^{
+    [UIView animateWithDuration:0.6 animations:^{
         _text1.alpha = _lastText1Alpha;
         _text.alpha  = _lastTextAlpha;
         _title.alpha = _lastTitleAlpha;
@@ -323,13 +355,10 @@ typedef enum {
                 //when pull the view down after pulling up，the progress cannot be < 0
                 _progress = _progress >= 0 ? _progress : 0;
                 
-                _frontView.center = CGPointMake(_frontView.center.x ,
-                                                _initalFrontCenterY - 400 * _progress);
+                _frontView.center = CGPointMake(_frontView.center.x , _initalFrontCenterY - 400 * _progress);
                 _frontView.alpha = 0.2 + _progress ;
                 
-
-                _backgroundView.center = CGPointMake(_backgroundView.center.x ,
-                                                     _initalBackgroundCenterY - 120 * _progress);
+                _backgroundView.center = CGPointMake(_backgroundView.center.x ,_initalBackgroundCenterY - 120 * _progress);
                 _backgroundView.alpha = 1.2 - _progress ;
                 _headerView.alpha = 1.0 - _progress;
                 }
@@ -338,30 +367,23 @@ typedef enum {
                 if(_viewPresentedType == viewPresentedTypeDown){
                     
                     _progress +=  translation.y / 300;
-                    
                     _progress = _progress >= 0 ? _progress : 0;
                     
-                    _frontView.center = CGPointMake(_frontView.center.x ,
-                                                    _initalFrontCenterY + 240 * _progress);
-                    
-                    _backgroundView.center = CGPointMake(_backgroundView.center.x ,
-                                                         _initalBackgroundCenterY + 120 * _progress);
-                    
-                    _backgroundView.alpha = _backgroundView.alpha + _progress/100 ;
+                    _frontView.center = CGPointMake(_frontView.center.x ,_initalFrontCenterY + 240 * _progress);
                     _frontView.alpha = 1.0 - _progress/2;
+                    
+                    _backgroundView.center = CGPointMake(_backgroundView.center.x ,_initalBackgroundCenterY + 120 * _progress);
+                    _backgroundView.alpha = _backgroundView.alpha + _progress/100 ;
 
                     _headerView.alpha = 0.0 + _progress/1.5;
 //                    NSLog(@"drag down,_frontView.alpha:%f",_frontView.alpha);
                 }else{
                 _progress +=  translation.y / 300;
-                
                 _progress = _progress >= 0 ? _progress : 0;
                 
-                _frontView.center = CGPointMake(_frontView.center.x ,
-                                                _initalFrontCenterY + 120 * _progress);
+                _frontView.center = CGPointMake(_frontView.center.x ,_initalFrontCenterY + 120 * _progress);
                 
-                _backgroundView.center = CGPointMake(_backgroundView.center.x ,
-                                                     _initalBackgroundCenterY + 120 * _progress);
+                _backgroundView.center = CGPointMake(_backgroundView.center.x , _initalBackgroundCenterY + 120 * _progress);
                 _backgroundView.alpha = 1.2 - _progress ;
                 _headerView.alpha = 1.0 - _progress;
             }
@@ -370,21 +392,17 @@ typedef enum {
             break;
         }
         case UIGestureRecognizerStateCancelled:{
-            recognizer.view.center = CGPointMake(recognizer.view.center.x ,
-                                                 _initalSelfCenterY);
+            recognizer.view.center = CGPointMake(recognizer.view.center.x ,_initalSelfCenterY);
             break;
         }
         case UIGestureRecognizerStateFailed:{
-            recognizer.view.center = CGPointMake(recognizer.view.center.x ,
-                                                 _initalSelfCenterY);
+            recognizer.view.center = CGPointMake(recognizer.view.center.x ,_initalSelfCenterY);
             break;
         }
         case UIGestureRecognizerStatePossible:{
-            
             break;
         }
         case UIGestureRecognizerStateEnded:{
-            
             if(_dragDirection == dragUp){
             if (_progress >0.6) {
                  _viewPresentedType = viewPresentedTypeDown;
@@ -449,10 +467,8 @@ typedef enum {
                                          _frontView.alpha = 1.0;
                                          _headerView.alpha = 0.0;
                                      } completion:^(BOOL finished) {
-                                         
                                      }];
                 }
-
             }
 
             _progress = 0.0;

@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "networkManager.h"
 
-@interface ViewController : UIViewController
+@interface ViewController : UIViewController<networkDelegate>
 
 @end
