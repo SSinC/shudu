@@ -10,7 +10,7 @@
 
 @protocol networkDelegate <NSObject>
 @required
-- (BOOL)infoFromNetwork:(NSDictionary *)info;
+- (BOOL)handleInfoFromNetwork:(NSDictionary *)info;
 @end
 
 

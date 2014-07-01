@@ -16,7 +16,7 @@
     // Override point for customization after application launch.
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    ViewController *_viewController = [[ViewController alloc] init];
+    _viewController = [[ViewController alloc] init];
     self.window.rootViewController = _viewController;
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
@@ -38,6 +38,7 @@
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
+    [_viewController getNetworkInfo];
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
 }
 

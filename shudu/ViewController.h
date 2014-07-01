@@ -11,4 +11,5 @@
 
 @interface ViewController : UIViewController<networkDelegate>
 
+- (void)getNetworkInfo;
 @end

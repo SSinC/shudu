@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "shudu/ViewController.m"
-            timestampString = "425813685.197888"
+            timestampString = "425899842.29374"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "503"
-            endingLineNumber = "503"
+            startingLineNumber = "546"
+            endingLineNumber = "546"
             landmarkName = "-handleTap:"
             landmarkType = "5">
          </BreakpointContent>

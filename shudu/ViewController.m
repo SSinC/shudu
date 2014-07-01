@@ -9,6 +9,8 @@
 #import "ViewController.h"
 #import "uiElements.h"
 #import "FRDLivelyButton.h"
+#import "UIImageView+WebCache.h"
+#import "defines.h"
 
 typedef enum {
     dragUp = 0,
@@ -62,6 +64,9 @@ typedef enum {
     float _lastText1Alpha;
     float _lastHeaderAlpha;
     BOOL _itemsShowed;
+    
+    networkManager *_networkInstance;
+    NSUserDefaults *_userDefaults;
 }
 
 - (void)viewDidLoad
@@ -197,6 +202,7 @@ typedef enum {
                                                     action:@selector(handleTap:)];
     [_contentView addGestureRecognizer:tapGestureRecognizer];
     
+     _userDefaults = [NSUserDefaults standardUserDefaults];
     double delayInSeconds = 1.0;
     __weak id wself = self;
     dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
@@ -213,25 +219,62 @@ typedef enum {
     /*************************************
      Netwokr weather instance
      *************************************/
-    networkManager *weatherInstance = [networkManager sharedInstance];
-    weatherInstance.delegate = self;
-    [weatherInstance getNetworkInfo:@"http://news-at.zhihu.com/api/3/news/latest"];
-    //http://news-at.zhihu.com/api/3/news/hot
-//    [self addScrollView];
+    [self getNetworkInfo];
 }
 
-- (BOOL)infoFromNetwork:(NSDictionary *)info
-{    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        _imageView.image = info[@"image"];
-        _title.frame = CGRectMake(110, 150, 200, 120);
-        _text1.frame = CGRectMake(115, 215, 180, 100);
-        [_title setText:info[@"title"]];
-        _title.font = [UIFont boldSystemFontOfSize:20];
-        _title.numberOfLines = 3;
-        _text1.numberOfLines = 2;
-        [_text1 setText:info[@"url"]];
+- (void)getNetworkInfo
+{
+    if(!_networkInstance){
+        _networkInstance = [networkManager sharedInstance];
+        _networkInstance.delegate = self;
+    }
+    [_networkInstance getNetworkInfo:@"http://news-at.zhihu.com/api/3/news/latest"];
+    ////http://news-at.zhihu.com/api/3/news/hot;
+}
+
+- (BOOL)handleInfoFromNetwork:(NSDictionary *)info
+{
+    if(info[@"imageUrl"]){
+        NSLog(@"info[@imageUrl]:%@",info[@"imageUrl"]);
+    __block UIActivityIndicatorView *activityIndicator;
+    __weak UIImageView *weakImageView = _imageView;
+    [_imageView sd_setImageWithURL:[NSURL URLWithString:info[@"imageUrl"]] 
+                      placeholderImage:nil
+                               options:SDWebImageProgressiveDownload
+                              progress:^(NSInteger receivedSize, NSInteger expectedSize) {
+                                  if (!activityIndicator) {
+                                      [weakImageView addSubview:activityIndicator = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray]];
+                                      activityIndicator.center = weakImageView.center;
+                                      [activityIndicator startAnimating];
+                                  }
+                              }
+                             completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+                                 [activityIndicator removeFromSuperview];
+                                 activityIndicator = nil;
+                             }];
+//        [_imageView sd_setImageWithURL:[NSURL URLWithString:info[@"imageUrl"]]];
+    }
+    
+     dispatch_async(dispatch_get_main_queue(), ^{
+         NSString *title = info[@"title"];
+         NSString *url   = info[@"url"];
+         NSLog(@"WKLastTitle:%@, title:%@",[_userDefaults objectForKey:WKLastTitle],title);
+//         NSLog(@"title && ![title isEqualToString:WKLastTitle]:%@",[title isEqualToString:WKLastTitle]?@"YES":@"NO");
+//            NSLog(@"url && ![url isEqualToString:WKLastUrl]:%@",[url isEqualToString:WKLastUrl]?@"YES":@"NO");
+         
+         if(title ){
+            _title.frame = CGRectMake(110, 150, 200, 120);
+            [_title setText:title];
+            _title.font = [UIFont boldSystemFontOfSize:20];
+            _title.numberOfLines = 3;
+         }
+         if(url ){
+            _text1.frame = CGRectMake(115, 215, 180, 100);
+            _text1.numberOfLines = 2;
+            [_text1 setText:url];
+         }
     });
+
     return YES;
 }
 
@@ -259,9 +302,9 @@ typedef enum {
         _lastHeaderAlpha = _header.alpha;
         _lastTitleAlpha = _title.alpha;
         [UIView animateWithDuration:0.5 animations:^{
-            _text1.alpha *= 0.2;
-            _text.alpha  *= 0.2;
-            _title.alpha *= 0.2;
+            _text1.alpha  *= 0.2;
+            _text.alpha   *= 0.2;
+            _title.alpha  *= 0.2;
             _header.alpha *= 0.2;
         }];
     }
