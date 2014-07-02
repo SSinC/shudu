@@ -226,6 +226,7 @@ typedef enum {
     NSUserDefaults *_userDefaults;
     
     UIActivityIndicatorView *_webViewActivityIndicatorView;
+    UIWebView *_webView;
 }
 
 - (void)viewDidLoad
@@ -260,21 +261,29 @@ typedef enum {
 //    _backgroundView.layer.shadowRadius = 10;
 //    _backgroundView.layer.shadowColor = [UIColor blackColor].CGColor;
 //    _backgroundView.layer.shadowOffset = CGSizeMake(-3, 3);
-    _imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 185, 100, 100)];
+    _imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 180, 100, 100)];
+    [self setImageView:[_userDefaults objectForKey:WKLastImgUrl]];
     
-    _title = [[UILabel alloc] initWithFrame:CGRectMake(35, 150, 240, 120)];
+    _title = [[UILabel alloc] init];
     [_title setText:@"25%"];
     [_title setTextColor:[UIColor blackColor]];
-    _title.font = [UIFont boldSystemFontOfSize:110];
+//    _title.font = [UIFont boldSystemFontOfSize:110];
     //    [labelCity setFont:[UIFont fontWithName:@"HelveticaNeue-UltraLight" size:25]];
     _title.textAlignment = NSTextAlignmentLeft;
+    _title.frame = CGRectMake(110, 150, 200, 120);
+    [_title setText:[_userDefaults objectForKey:WKLastTitle]];
+    _title.font = [UIFont boldSystemFontOfSize:20];
+    _title.numberOfLines = 3;
     [_backgroundView addSubview:_title];
     
-    _text1 = [[UILabel alloc] initWithFrame:CGRectMake(35, 235, 230, 80)];
+    _text1 = [[UILabel alloc] init];
     _text1.numberOfLines = 3;
     [_text1 setText:@"Sthewrh sf465thwrh yrthje6 ujfdgf sdhgr\nwegsfd yuytdh esrh54 5gfgergfs gfdgr\negsfd"];
     [_text1 setTextColor:[UIColor blackColor]];
     _text1.font = [UIFont boldSystemFontOfSize:13];
+    _text1.frame = CGRectMake(115, 215, 180, 100);
+    _text1.numberOfLines = 2;
+    [_text1 setText:[_userDefaults objectForKey:WKLastUrl]];
     //    [labelCity setFont:[UIFont fontWithName:@"HelveticaNeue-UltraLight" size:25]];
     [_backgroundView addSubview:_text1];
     [_backgroundView addSubview:_imageView];
@@ -313,9 +322,10 @@ typedef enum {
                 [UIImage imageNamed:@"icon_plist_webexball"],
                 [UIImage imageNamed:@"icon_plist_webexball"],
                 [UIImage imageNamed:@"icon_plist_webexball"]];
+    
     _itemsView = [[UIView alloc] initWithFrame:CGRectMake(0, 400, 300, 45)];
-//    _itemsView.backgroundColor = [UIColor colorWithWhite:0.5 alpha:0.5];
     [_backgroundView addSubview:_itemsView];
+    
     _button = [[FRDLivelyButton alloc] initWithFrame:CGRectMake(20,10, 25, 25)];
     [_button setOptions:@{ kFRDLivelyButtonLineWidth: @(2.0f),
                            kFRDLivelyButtonHighlightedColor: [UIColor colorWithRed:0.5 green:0.8 blue:1.0 alpha:1.0],
@@ -354,7 +364,7 @@ typedef enum {
     UIPanGestureRecognizer *panGestureRecognizer = [[UIPanGestureRecognizer alloc]
                                                     initWithTarget:self
                                                     action:@selector(handlePan:)];
-    [_contentView addGestureRecognizer:panGestureRecognizer];
+    [self.view addGestureRecognizer:panGestureRecognizer];
     
     UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc]
                                                     initWithTarget:self
@@ -395,33 +405,14 @@ typedef enum {
 - (BOOL)handleInfoFromNetwork:(NSDictionary *)info
 {
     if(info[@"imageUrl"]){
-        NSLog(@"info[@imageUrl]:%@",info[@"imageUrl"]);
-    __block UIActivityIndicatorView *activityIndicator;
-    __weak UIImageView *weakImageView = _imageView;
-    [_imageView sd_setImageWithURL:[NSURL URLWithString:info[@"imageUrl"]] 
-                      placeholderImage:nil
-                               options:SDWebImageProgressiveDownload
-                              progress:^(NSInteger receivedSize, NSInteger expectedSize) {
-                                  if (!activityIndicator) {
-                                      [weakImageView addSubview:activityIndicator = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray]];
-                                      activityIndicator.center = weakImageView.center;
-                                      [activityIndicator startAnimating];
-                                  }
-                              }
-                             completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
-                                 [activityIndicator removeFromSuperview];
-                                 activityIndicator = nil;
-                             }];
-//        [_imageView sd_setImageWithURL:[NSURL URLWithString:info[@"imageUrl"]]];
+        [self setImageView:info[@"imageUrl"]];
     }
     
      dispatch_async(dispatch_get_main_queue(), ^{
          NSString *title = info[@"title"];
          _url            = info[@"url"];
          NSLog(@"WKLastTitle:%@, title:%@",[_userDefaults objectForKey:WKLastTitle],title);
-//         NSLog(@"title && ![title isEqualToString:WKLastTitle]:%@",[title isEqualToString:WKLastTitle]?@"YES":@"NO");
-//            NSLog(@"url && ![url isEqualToString:WKLastUrl]:%@",[url isEqualToString:WKLastUrl]?@"YES":@"NO");
-         
+
          if(title ){
             _title.frame = CGRectMake(110, 150, 200, 120);
             [_title setText:title];
@@ -436,6 +427,28 @@ typedef enum {
     });
     
     return YES;
+}
+
+- (void)setImageView:(NSString *)urlString
+{
+    __block UIActivityIndicatorView *activityIndicator;
+    __weak UIImageView *weakImageView = _imageView;
+    
+    [_imageView sd_setImageWithURL:[NSURL URLWithString:urlString]
+                  placeholderImage:nil
+                           options:SDWebImageProgressiveDownload
+                          progress:^(NSInteger receivedSize, NSInteger expectedSize) {
+                              if (!activityIndicator) {
+                                  [weakImageView addSubview:activityIndicator = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray]];
+                                  activityIndicator.center = weakImageView.center;
+                                  [activityIndicator startAnimating];
+                              }
+                          }
+                         completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+                             [activityIndicator removeFromSuperview];
+                             activityIndicator = nil;
+                         }];
+
 }
 
 #pragma mark - Show and dismiss items
@@ -527,7 +540,7 @@ typedef enum {
 }
 
 #pragma mark Gesture Control - Pan
-- (void)handlePan:(UIPanGestureRecognizer *) recognizer
+- (void)handlePan:(UIPanGestureRecognizer *)recognizer
 {
     if(_itemsShowed) return;
     if(_initalSelfCenterY == 0.0){
@@ -613,15 +626,25 @@ typedef enum {
             break;
         }
         case UIGestureRecognizerStateEnded:{
+            
             if(_dragDirection == dragUp){
+                
             if (_progress >0.6) {
+                
+                _webView = [[UIWebView alloc] initWithFrame:_frontView.bounds];
+                _webView.delegate = self;
+                NSURLRequest *request =[NSURLRequest requestWithURL:[NSURL URLWithString:_url]];
+                [_frontView addSubview: _webView];
+                [_webView loadRequest:request];
+                
                  _viewPresentedType = viewPresentedTypeDown;
+                
                 [UIView animateWithDuration:0.5
                                       delay:0.0
                                     options:UIViewAnimationOptionCurveEaseInOut
                                  animations:^{
-                                     _backgroundView.frame = CGRectMake(0, -130, CGRectGetWidth(_backgroundView.frame), CGRectGetHeight(_backgroundView.frame));
-                                      _frontView.frame = CGRectMake(0, 150, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds));
+                                     _backgroundView.frame = CGRectMake(0, -165, CGRectGetWidth(_backgroundView.frame), CGRectGetHeight(_backgroundView.frame));
+                                      _frontView.frame = CGRectMake(0, 130, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds));
                                      _backgroundView.alpha = 0.2;
                                      _headerView.alpha = 0.0;
                                  } completion:^(BOOL finished) {
@@ -706,11 +729,12 @@ typedef enum {
         CGPoint touchPoint = [recognizer locationInView:_contentView];
         
          if (CGRectContainsPoint(_text1.frame, touchPoint)) {
-             UIWebView *webView = [[UIWebView alloc] initWithFrame:self.view.bounds];
-             webView.delegate = self;
+             _webView = [[UIWebView alloc] initWithFrame:_frontView.bounds];
+             _webView.delegate = self;
              NSURLRequest *request =[NSURLRequest requestWithURL:[NSURL URLWithString:_url]];
-             [self.view addSubview: webView];
-             [webView loadRequest:request];
+             [_frontView addSubview: _webView];
+             [_webView loadRequest:request];
+//             _webView.alpha = 0.0;
          }
     }else{
         NSInteger tapIndex = [self indexOfTap:[recognizer locationInView:_itemsView]];
@@ -812,7 +836,7 @@ typedef enum {
 #pragma mark  webView delegate
 - (void)webViewDidStartLoad:(UIWebView *)webView
 {
-    UIView *view = [[UIView alloc] initWithFrame:self.view.bounds];
+    UIView *view = [[UIView alloc] initWithFrame:_frontView.bounds];
     [view setTag:108];
     [view setBackgroundColor:[UIColor clearColor]];
     UIImage *blurImage = [_contentView rn_screenshot];
@@ -828,7 +852,7 @@ typedef enum {
     
     _webViewActivityIndicatorView = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 32.0f, 32.0f)];
     [_webViewActivityIndicatorView setCenter:view.center];
-    [_webViewActivityIndicatorView setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhite];
+    [_webViewActivityIndicatorView setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
     [view addSubview:_webViewActivityIndicatorView];
     
     [_webViewActivityIndicatorView startAnimating];
@@ -840,6 +864,7 @@ typedef enum {
     UIView *view = (UIView *)[self.view viewWithTag:108];
     [UIView animateWithDuration:0.7 animations:^{
         view.alpha = 0.0;
+//        _webView.alpha = 1.0;
     } completion:^(BOOL finished) {
         [view removeFromSuperview];
     }];
