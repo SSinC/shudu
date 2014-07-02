@@ -233,12 +233,12 @@ typedef enum {
     [super viewDidLoad];
     [self setNeedsStatusBarAppearanceUpdate];
     _contentView = [[UIView alloc] initWithFrame:self.view.bounds];
-    _contentView.backgroundColor = [UIColor whiteColor];
+    _contentView.backgroundColor = [UIColor blueColor];
     [self.view addSubview:_contentView];
     
     CGRect frontViewRect = CGRectMake(0, 500, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds)*2);
     _frontView = [[UIView alloc] initWithFrame:frontViewRect];
-    _frontView.backgroundColor = [UIColor whiteColor];
+    _frontView.backgroundColor = [UIColor yellowColor];
     _frontView.alpha = 0.2;
 //    _frontView.layer.shadowOpacity = 0.5;
 //    _frontView.layer.shadowRadius = 10;
@@ -255,7 +255,7 @@ typedef enum {
     
     CGRect backgroundViewRect = CGRectMake(0, 0, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds));
     _backgroundView = [[UIView alloc] initWithFrame:backgroundViewRect];
-    _backgroundView.backgroundColor = [UIColor whiteColor];
+    _backgroundView.backgroundColor = [UIColor grayColor];
 //    _backgroundView.layer.shadowOpacity = 0.5;
 //    _backgroundView.layer.shadowRadius = 10;
 //    _backgroundView.layer.shadowColor = [UIColor blackColor].CGColor;
