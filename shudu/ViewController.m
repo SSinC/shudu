@@ -23,6 +23,161 @@ typedef enum {
     viewPresentedTypeDown
 } viewPresentedType;
 
+@implementation UIView (rn_Screenshot)
+
+- (UIImage *)rn_screenshot {
+    UIGraphicsBeginImageContext(self.bounds.size);
+    if([self respondsToSelector:@selector(drawViewHierarchyInRect:afterScreenUpdates:)]){
+        [self drawViewHierarchyInRect:self.bounds afterScreenUpdates:NO];
+    }
+    else{
+        [self.layer renderInContext:UIGraphicsGetCurrentContext()];
+    }
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    NSData *imageData = UIImageJPEGRepresentation(image, 0.75);
+    image = [UIImage imageWithData:imageData];
+    return image;
+}
+
+@end
+
+#import <Accelerate/Accelerate.h>
+
+@implementation UIImage (rn_Blur)
+
+- (UIImage *)applyBlurWithRadius:(CGFloat)blurRadius tintColor:(UIColor *)tintColor saturationDeltaFactor:(CGFloat)saturationDeltaFactor maskImage:(UIImage *)maskImage
+{
+    // Check pre-conditions.
+    if (self.size.width < 1 || self.size.height < 1) {
+        PSLog (@"*** error: invalid size: (%.2f x %.2f). Both dimensions must be >= 1: %@", self.size.width, self.size.height, self);
+        return nil;
+    }
+    if (!self.CGImage) {
+        PSLog (@"*** error: image must be backed by a CGImage: %@", self);
+        return nil;
+    }
+    if (maskImage && !maskImage.CGImage) {
+        PSLog (@"*** error: maskImage must be backed by a CGImage: %@", maskImage);
+        return nil;
+    }
+    
+    CGRect imageRect = { CGPointZero, self.size };
+    UIImage *effectImage = self;
+    
+    BOOL hasBlur = blurRadius > __FLT_EPSILON__;
+    BOOL hasSaturationChange = fabs(saturationDeltaFactor - 1.) > __FLT_EPSILON__;
+    if (hasBlur || hasSaturationChange) {
+        UIGraphicsBeginImageContextWithOptions(self.size, NO, [[UIScreen mainScreen] scale]);
+        CGContextRef effectInContext = UIGraphicsGetCurrentContext();
+        CGContextScaleCTM(effectInContext, 1.0, -1.0);
+        CGContextTranslateCTM(effectInContext, 0, -self.size.height);
+        CGContextDrawImage(effectInContext, imageRect, self.CGImage);
+        
+        vImage_Buffer effectInBuffer;
+        effectInBuffer.data     = CGBitmapContextGetData(effectInContext);
+        effectInBuffer.width    = CGBitmapContextGetWidth(effectInContext);
+        effectInBuffer.height   = CGBitmapContextGetHeight(effectInContext);
+        effectInBuffer.rowBytes = CGBitmapContextGetBytesPerRow(effectInContext);
+        
+        UIGraphicsBeginImageContextWithOptions(self.size, NO, [[UIScreen mainScreen] scale]);
+        CGContextRef effectOutContext = UIGraphicsGetCurrentContext();
+        vImage_Buffer effectOutBuffer;
+        effectOutBuffer.data     = CGBitmapContextGetData(effectOutContext);
+        effectOutBuffer.width    = CGBitmapContextGetWidth(effectOutContext);
+        effectOutBuffer.height   = CGBitmapContextGetHeight(effectOutContext);
+        effectOutBuffer.rowBytes = CGBitmapContextGetBytesPerRow(effectOutContext);
+        
+        if (hasBlur) {
+            // A description of how to compute the box kernel width from the Gaussian
+            // radius (aka standard deviation) appears in the SVG spec:
+            // http://www.w3.org/TR/SVG/filters.html#feGaussianBlurElement
+            //
+            // For larger values of 's' (s >= 2.0), an approximation can be used: Three
+            // successive box-blurs build a piece-wise quadratic convolution kernel, which
+            // approximates the Gaussian kernel to within roughly 3%.
+            //
+            // let d = floor(s * 3*sqrt(2*pi)/4 + 0.5)
+            //
+            // ... if d is odd, use three box-blurs of size 'd', centered on the output pixel.
+            //
+            CGFloat inputRadius = blurRadius * [[UIScreen mainScreen] scale];
+            NSUInteger radius = floor(inputRadius * 3. * sqrt(2 * M_PI) / 4 + 0.5);
+            if (radius % 2 != 1) {
+                radius += 1; // force radius to be odd so that the three box-blur methodology works.
+            }
+            vImageBoxConvolve_ARGB8888(&effectInBuffer, &effectOutBuffer, NULL, 0, 0, radius, radius, 0, kvImageEdgeExtend);
+            vImageBoxConvolve_ARGB8888(&effectOutBuffer, &effectInBuffer, NULL, 0, 0, radius, radius, 0, kvImageEdgeExtend);
+            vImageBoxConvolve_ARGB8888(&effectInBuffer, &effectOutBuffer, NULL, 0, 0, radius, radius, 0, kvImageEdgeExtend);
+        }
+        BOOL effectImageBuffersAreSwapped = NO;
+        if (hasSaturationChange) {
+            CGFloat s = saturationDeltaFactor;
+            CGFloat floatingPointSaturationMatrix[] = {
+                0.0722 + 0.9278 * s,  0.0722 - 0.0722 * s,  0.0722 - 0.0722 * s,  0,
+                0.7152 - 0.7152 * s,  0.7152 + 0.2848 * s,  0.7152 - 0.7152 * s,  0,
+                0.2126 - 0.2126 * s,  0.2126 - 0.2126 * s,  0.2126 + 0.7873 * s,  0,
+                0,                    0,                    0,  1,
+            };
+            const int32_t divisor = 256;
+            NSUInteger matrixSize = sizeof(floatingPointSaturationMatrix)/sizeof(floatingPointSaturationMatrix[0]);
+            int16_t saturationMatrix[matrixSize];
+            for (NSUInteger i = 0; i < matrixSize; ++i) {
+                saturationMatrix[i] = (int16_t)roundf(floatingPointSaturationMatrix[i] * divisor);
+            }
+            if (hasBlur) {
+                vImageMatrixMultiply_ARGB8888(&effectOutBuffer, &effectInBuffer, saturationMatrix, divisor, NULL, NULL, kvImageNoFlags);
+                effectImageBuffersAreSwapped = YES;
+            }
+            else {
+                vImageMatrixMultiply_ARGB8888(&effectInBuffer, &effectOutBuffer, saturationMatrix, divisor, NULL, NULL, kvImageNoFlags);
+            }
+        }
+        if (!effectImageBuffersAreSwapped)
+            effectImage = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        
+        if (effectImageBuffersAreSwapped)
+            effectImage = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+    }
+    
+    // Set up output context.
+    UIGraphicsBeginImageContextWithOptions(self.size, NO, [[UIScreen mainScreen] scale]);
+    CGContextRef outputContext = UIGraphicsGetCurrentContext();
+    CGContextScaleCTM(outputContext, 1.0, -1.0);
+    CGContextTranslateCTM(outputContext, 0, -self.size.height);
+    
+    // Draw base image.
+    CGContextDrawImage(outputContext, imageRect, self.CGImage);
+    
+    // Draw effect image.
+    if (hasBlur) {
+        CGContextSaveGState(outputContext);
+        if (maskImage) {
+            CGContextClipToMask(outputContext, imageRect, maskImage.CGImage);
+        }
+        CGContextDrawImage(outputContext, imageRect, effectImage.CGImage);
+        CGContextRestoreGState(outputContext);
+    }
+    
+    // Add in color tint.
+    if (tintColor) {
+        CGContextSaveGState(outputContext);
+        CGContextSetFillColorWithColor(outputContext, tintColor.CGColor);
+        CGContextFillRect(outputContext, imageRect);
+        CGContextRestoreGState(outputContext);
+    }
+    
+    // Output image is ready.
+    UIImage *outputImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return outputImage;
+}
+
+@end
+
 @interface ViewController ()
 
 @end
@@ -65,8 +220,12 @@ typedef enum {
     float _lastHeaderAlpha;
     BOOL _itemsShowed;
     
+    NSString *_url;
+    
     networkManager *_networkInstance;
     NSUserDefaults *_userDefaults;
+    
+    UIActivityIndicatorView *_webViewActivityIndicatorView;
 }
 
 - (void)viewDidLoad
@@ -222,6 +381,7 @@ typedef enum {
     [self getNetworkInfo];
 }
 
+#pragma mark - getNetworkInfo
 - (void)getNetworkInfo
 {
     if(!_networkInstance){
@@ -257,7 +417,7 @@ typedef enum {
     
      dispatch_async(dispatch_get_main_queue(), ^{
          NSString *title = info[@"title"];
-         NSString *url   = info[@"url"];
+         _url            = info[@"url"];
          NSLog(@"WKLastTitle:%@, title:%@",[_userDefaults objectForKey:WKLastTitle],title);
 //         NSLog(@"title && ![title isEqualToString:WKLastTitle]:%@",[title isEqualToString:WKLastTitle]?@"YES":@"NO");
 //            NSLog(@"url && ![url isEqualToString:WKLastUrl]:%@",[url isEqualToString:WKLastUrl]?@"YES":@"NO");
@@ -268,17 +428,17 @@ typedef enum {
             _title.font = [UIFont boldSystemFontOfSize:20];
             _title.numberOfLines = 3;
          }
-         if(url ){
+         if(_url ){
             _text1.frame = CGRectMake(115, 215, 180, 100);
             _text1.numberOfLines = 2;
-            [_text1 setText:url];
+            [_text1 setText:_url];
          }
     });
-
+    
     return YES;
 }
 
-#pragma mark - Show
+#pragma mark - Show and dismiss items
 - (void)showItems:(id)sender
 {
     if(_itemsShowed){
@@ -333,6 +493,7 @@ typedef enum {
 
 }
 
+#pragma mark - Set how items show and dismiss
 - (void)showWithView:(calloutItemView *)view idx:(NSUInteger)idx initDelay:(CGFloat)initDelay centerY:(CGFloat)y{
     [UIView animateWithDuration:0.7
                           delay:(initDelay + idx*0.08f)
@@ -365,7 +526,7 @@ typedef enum {
                      completion:nil];
 }
 
-#pragma mark Gesture Control
+#pragma mark Gesture Control - Pan
 - (void)handlePan:(UIPanGestureRecognizer *) recognizer
 {
     if(_itemsShowed) return;
@@ -537,15 +698,28 @@ typedef enum {
     return YES;
 }
 
+#pragma mark Gesture Control - Tap
 - (void)handleTap:(UIGestureRecognizer *)recognizer
 {
-    if(!_itemsShowed) return;
-    
-    NSInteger tapIndex = [self indexOfTap:[recognizer locationInView:_itemsView]];
-    if (tapIndex != NSNotFound) {
-        [self didTapItemAtIndex:tapIndex];
+    if(!_itemsShowed)
+    {
+        CGPoint touchPoint = [recognizer locationInView:_contentView];
+        
+         if (CGRectContainsPoint(_text1.frame, touchPoint)) {
+             UIWebView *webView = [[UIWebView alloc] initWithFrame:self.view.bounds];
+             webView.delegate = self;
+             NSURLRequest *request =[NSURLRequest requestWithURL:[NSURL URLWithString:_url]];
+             [self.view addSubview: webView];
+             [webView loadRequest:request];
+         }
     }else{
-        [self dismissItems];
+        NSInteger tapIndex = [self indexOfTap:[recognizer locationInView:_itemsView]];
+        
+        if (tapIndex != NSNotFound) {
+            [self didTapItemAtIndex:tapIndex];
+        }else{
+            [self dismissItems];
+        }
     }
 }
 
@@ -635,7 +809,52 @@ typedef enum {
 //    }
 }
 
+#pragma mark  webView delegate
+- (void)webViewDidStartLoad:(UIWebView *)webView
+{
+    UIView *view = [[UIView alloc] initWithFrame:self.view.bounds];
+    [view setTag:108];
+    [view setBackgroundColor:[UIColor clearColor]];
+    UIImage *blurImage = [_contentView rn_screenshot];
+    blurImage = [blurImage applyBlurWithRadius:5 tintColor:nil saturationDeltaFactor:1.8 maskImage:nil];
+    UIImageView *blurView = [[UIImageView alloc] initWithImage:blurImage];
+    [view addSubview:blurView];
+    view.alpha = 0.0;
+    [self.view addSubview:view];
+    [UIView animateWithDuration:0.3 animations:^{
+        view.alpha = 1.0;
+    } completion:^(BOOL finished) {
+    }];
+    
+    _webViewActivityIndicatorView = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 32.0f, 32.0f)];
+    [_webViewActivityIndicatorView setCenter:view.center];
+    [_webViewActivityIndicatorView setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhite];
+    [view addSubview:_webViewActivityIndicatorView];
+    
+    [_webViewActivityIndicatorView startAnimating];
+}
 
+- (void)webViewDidFinishLoad:(UIWebView *)webView
+{
+    [_webViewActivityIndicatorView stopAnimating];
+    UIView *view = (UIView *)[self.view viewWithTag:108];
+    [UIView animateWithDuration:0.7 animations:^{
+        view.alpha = 0.0;
+    } completion:^(BOOL finished) {
+        [view removeFromSuperview];
+    }];
+    NSLog(@"webViewDidFinishLoad");
+}
+
+- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error
+{
+    [_webViewActivityIndicatorView stopAnimating];
+    UIView *view = (UIView *)[self.view viewWithTag:108];
+    [view removeFromSuperview];
+    NSLog(@"webViewdidFailLoadWithError");
+}
+
+#pragma mark didReceiveMemoryWarning
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

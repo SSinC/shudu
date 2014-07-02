@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "networkManager.h"
 
-@interface ViewController : UIViewController<networkDelegate>
+@interface ViewController : UIViewController<networkDelegate,UIWebViewDelegate>
 
 - (void)getNetworkInfo;
 @end
