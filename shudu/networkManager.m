@@ -14,7 +14,7 @@
 {
     NSUserDefaults *_userDefaults;
     BOOL           _sendWeatherInfoCompleted;
-    __weak id      _wself ;
+    __weak id      _wself ;//???
 }
 
 + (instancetype)sharedInstance

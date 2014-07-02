@@ -256,7 +256,7 @@ typedef enum {
     
     CGRect backgroundViewRect = CGRectMake(0, 0, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds));
     _backgroundView = [[UIView alloc] initWithFrame:backgroundViewRect];
-    _backgroundView.backgroundColor = [UIColor grayColor];
+    _backgroundView.backgroundColor = [UIColor whiteColor];
 //    _backgroundView.layer.shadowOpacity = 0.5;
 //    _backgroundView.layer.shadowRadius = 10;
 //    _backgroundView.layer.shadowColor = [UIColor blackColor].CGColor;
@@ -291,9 +291,14 @@ typedef enum {
     [_contentView addSubview:_backgroundView];
     [_contentView addSubview:_frontView];
 
+    NSDate *curDate = [NSDate date];
+    NSDateFormatter *formater = [[ NSDateFormatter alloc] init];
+    [formater setDateFormat:@"yyyy.MM.dd"];
+    NSString * curTime = [formater stringFromDate:curDate];
+    
     _headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.bounds), 60)];
     _header = [[UILabel alloc] initWithFrame:CGRectMake(8, 0, 90, 30)];
-    [_header setText:@"2014.6.26"];
+    [_header setText:curTime];
     [_header setTextColor:[UIColor blackColor]];
     _header.font = [UIFont boldSystemFontOfSize:15];
     //    [labelCity setFont:[UIFont fontWithName:@"HelveticaNeue-UltraLight" size:25]];
