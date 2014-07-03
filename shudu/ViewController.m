@@ -189,9 +189,9 @@ typedef enum {
     UIView *_headerView;
     UIView *_upView;
     UIView *_itemsView;
-    
     UIView *_contentView;
     UIImageView *_imageView;
+    UIScrollView *_scrollView;
     
     float _progress;
     float _initalSelfCenterY;
@@ -233,9 +233,16 @@ typedef enum {
 {
     [super viewDidLoad];
     [self setNeedsStatusBarAppearanceUpdate];
+     _userDefaults = [NSUserDefaults standardUserDefaults];
     _contentView = [[UIView alloc] initWithFrame:self.view.bounds];
     _contentView.backgroundColor = [UIColor blueColor];
     [self.view addSubview:_contentView];
+    
+    _scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+    [_scrollView setPagingEnabled:YES];
+    [_scrollView setDelegate:self];
+    [_scrollView setShowsHorizontalScrollIndicator:NO];
+    [_contentView addSubview:_scrollView];
     
     CGRect frontViewRect = CGRectMake(0, 500, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds)*2);
     _frontView = [[UIView alloc] initWithFrame:frontViewRect];
@@ -261,7 +268,7 @@ typedef enum {
 //    _backgroundView.layer.shadowRadius = 10;
 //    _backgroundView.layer.shadowColor = [UIColor blackColor].CGColor;
 //    _backgroundView.layer.shadowOffset = CGSizeMake(-3, 3);
-    _imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 180, 100, 100)];
+    _imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 182, 100, 100)];
     [self setImageView:[_userDefaults objectForKey:WKLastImgUrl]];
     
     _title = [[UILabel alloc] init];
@@ -376,7 +383,6 @@ typedef enum {
                                                     action:@selector(handleTap:)];
     [_contentView addGestureRecognizer:tapGestureRecognizer];
     
-     _userDefaults = [NSUserDefaults standardUserDefaults];
     double delayInSeconds = 1.0;
     __weak id wself = self;
     dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
@@ -729,8 +735,7 @@ typedef enum {
 #pragma mark Gesture Control - Tap
 - (void)handleTap:(UIGestureRecognizer *)recognizer
 {
-    if(!_itemsShowed)
-    {
+    if(!_itemsShowed){
         CGPoint touchPoint = [recognizer locationInView:_contentView];
         
          if (CGRectContainsPoint(_text1.frame, touchPoint)) {

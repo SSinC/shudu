@@ -97,7 +97,7 @@
     networkManager *strongSelf = _wself;
     
     if(![CheckNetwork isExistenceNetwork]){
-        NSDictionary *sendDick = sendDick = @{@"title":WKLastTitle,@"url":WKLastUrl,@"imageUrl":WKLastImgUrl};
+        NSDictionary *sendDick = sendDick = @{@"title":[_userDefaults objectForKey:WKLastTitle],@"url":[_userDefaults objectForKey:WKLastUrl],@"imageUrl":[_userDefaults objectForKey:WKLastImgUrl]};
         if (strongSelf.delegate && [strongSelf.delegate respondsToSelector:@selector(handleInfoFromNetwork:)]) {
             _sendWeatherInfoCompleted = [strongSelf.delegate handleInfoFromNetwork:sendDick];
         }
