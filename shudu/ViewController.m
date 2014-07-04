@@ -236,9 +236,9 @@ typedef enum {
 {
     [super viewDidLoad];
     [self setNeedsStatusBarAppearanceUpdate];
-     _userDefaults = [NSUserDefaults standardUserDefaults];
+    _userDefaults = [NSUserDefaults standardUserDefaults];
     _contentView = [[UIView alloc] initWithFrame:self.view.bounds];
-//    _contentView.backgroundColor = [UIColor blueColor];
+    //    _contentView.backgroundColor = [UIColor blueColor];
     [self.view addSubview:_contentView];
     
     _scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
@@ -249,12 +249,12 @@ typedef enum {
     
     CGRect frontViewRect = CGRectMake(0, 500, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds)*2);
     _frontView = [[UIView alloc] initWithFrame:frontViewRect];
-//    _frontView.backgroundColor = [UIColor yellowColor];
+    //    _frontView.backgroundColor = [UIColor yellowColor];
     _frontView.alpha = 0.2;
-//    _frontView.layer.shadowOpacity = 0.5;
-//    _frontView.layer.shadowRadius = 10;
-//    _frontView.layer.shadowColor = [UIColor blackColor].CGColor;
-//    _frontView.layer.shadowOffset = CGSizeMake(-3, 3);
+    //    _frontView.layer.shadowOpacity = 0.5;
+    //    _frontView.layer.shadowRadius = 10;
+    //    _frontView.layer.shadowColor = [UIColor blackColor].CGColor;
+    //    _frontView.layer.shadowOffset = CGSizeMake(-3, 3);
     _text = [[UILabel alloc] initWithFrame:CGRectMake(30, 0, 230, 160)];
     _text.numberOfLines = 7;
     [_text setText:@"Sthew rhsytre wtgregsdfggf dgfsdhgr\nwesd fgsdfgsd fgsdfggsf dgergfsgfdgr\negssfgsdf gsdgfsdfgfd\nyhtdshrt ejhdfthdrtyjk erdtyjdf\nfhdfthfg hddrthd fthfthgfh\nfdhjdfgh rthdtf hdfg\ndfgjt hsthhdfgh\ndf ghdfghdfghs ertfrqwaf"];
@@ -267,17 +267,17 @@ typedef enum {
     CGRect backgroundViewRect = CGRectMake(0, 0, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds));
     _backgroundView = [[UIView alloc] initWithFrame:backgroundViewRect];
     _backgroundView.backgroundColor = [UIColor whiteColor];
-//    _backgroundView.layer.shadowOpacity = 0.5;
-//    _backgroundView.layer.shadowRadius = 10;
-//    _backgroundView.layer.shadowColor = [UIColor blackColor].CGColor;
-//    _backgroundView.layer.shadowOffset = CGSizeMake(-3, 3);
+    //    _backgroundView.layer.shadowOpacity = 0.5;
+    //    _backgroundView.layer.shadowRadius = 10;
+    //    _backgroundView.layer.shadowColor = [UIColor blackColor].CGColor;
+    //    _backgroundView.layer.shadowOffset = CGSizeMake(-3, 3);
     _imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 183, 100, 100)];
     [self setImageView:[_userDefaults objectForKey:WKLastImgUrl]];
     
     _title = [[UILabel alloc] init];
     [_title setText:@"25%"];
     [_title setTextColor:[UIColor blackColor]];
-//    _title.font = [UIFont boldSystemFontOfSize:110];
+    //    _title.font = [UIFont boldSystemFontOfSize:110];
     //    [labelCity setFont:[UIFont fontWithName:@"HelveticaNeue-UltraLight" size:25]];
     _title.textAlignment = NSTextAlignmentLeft;
     _title.frame = CGRectMake(110, 150, 200, 120);
@@ -287,8 +287,6 @@ typedef enum {
     [_backgroundView addSubview:_title];
     
     _text1 = [[UILabel alloc] init];
-    _text1.numberOfLines = 3;
-    [_text1 setText:@"Sthewrh sf465thwrh yrthje6 ujfdgf sdhgr\nwegsfd yuytdh esrh54 5gfgergfs gfdgr\negsfd"];
     [_text1 setTextColor:[UIColor blackColor]];
     _text1.font = [UIFont boldSystemFontOfSize:13];
     _text1.frame = CGRectMake(115, 215, 180, 100);
@@ -300,7 +298,7 @@ typedef enum {
     
     [_contentView addSubview:_backgroundView];
     [_contentView addSubview:_frontView];
-
+    
     NSDate *curDate = [NSDate date];
     NSDateFormatter *formater = [[ NSDateFormatter alloc] init];
     [formater setDateFormat:@"yyyy.MM.dd"];
@@ -315,7 +313,7 @@ typedef enum {
     _header.textAlignment = NSTextAlignmentLeft;
     [_headerView addSubview:_header];
     [_contentView addSubview:_headerView];
-
+    
     _upView = [[UIView alloc]initWithFrame:CGRectMake(0, -CGRectGetHeight(self.view.bounds), CGRectGetWidth(self.view.bounds),CGRectGetHeight(self.view.bounds))];
     UILabel *upTitle = [[UILabel alloc] initWithFrame:CGRectMake(30, 350, 90, 30)];
     [upTitle setText:@"upView"];
@@ -424,22 +422,22 @@ typedef enum {
         [self setImageView:info[@"imageUrl"]];
     }
     
-     dispatch_async(dispatch_get_main_queue(), ^{
-         _stroyTitle = info[@"title"];
-         _url            = info[@"url"];
-         NSLog(@"WKLastTitle:%@, title:%@",[_userDefaults objectForKey:WKLastTitle],_stroyTitle);
-
-         if(_stroyTitle ){
+    dispatch_async(dispatch_get_main_queue(), ^{
+        _stroyTitle = info[@"title"];
+        _url            = info[@"url"];
+        NSLog(@"WKLastTitle:%@, title:%@",[_userDefaults objectForKey:WKLastTitle],_stroyTitle);
+        
+        if(_stroyTitle ){
             _title.frame = CGRectMake(110, 150, 200, 120);
             [_title setText:_stroyTitle];
             _title.font = [UIFont boldSystemFontOfSize:20];
             _title.numberOfLines = 3;
-         }
-         if(_url ){
+        }
+        if(_url ){
             _text1.frame = CGRectMake(115, 215, 180, 100);
             _text1.numberOfLines = 2;
             [_text1 setText:_url];
-         }
+        }
     });
     
     return YES;
@@ -464,7 +462,7 @@ typedef enum {
                              [activityIndicator removeFromSuperview];
                              activityIndicator = nil;
                          }];
-
+    
 }
 
 #pragma mark - Show and dismiss items
@@ -475,11 +473,12 @@ typedef enum {
     }else{
         _itemsShowed = YES;
         [_button setStyle:kFRDLivelyButtonStyleCircleClose animated:YES];
+        
         [_items enumerateObjectsUsingBlock:^(calloutItemView *view, NSUInteger idx, BOOL *stop) {
-    //        view.layer.transform = CATransform3DMakeScale(0.1, 0.1, 1);
+            //        view.layer.transform = CATransform3DMakeScale(0.1, 0.1, 1);
             view.alpha = 0;
             CGFloat y = view.center.y;
-    //        view.center =CGPointMake(view.center.x, view.center.y - 30);
+            //        view.center =CGPointMake(view.center.x, view.center.y - 30);
             view.originalBackgroundColor = [UIColor clearColor];
             view.layer.borderWidth = 1.5f;
             
@@ -490,6 +489,7 @@ typedef enum {
         _lastTextAlpha = _text.alpha;
         _lastHeaderAlpha = _header.alpha;
         _lastTitleAlpha = _title.alpha;
+        
         [UIView animateWithDuration:0.5 animations:^{
             _text1.alpha  *= 0.2;
             _text.alpha   *= 0.2;
@@ -521,11 +521,12 @@ typedef enum {
         _header.alpha = _lastHeaderAlpha;
         _imageView.alpha = _lastText1Alpha;
     }];
-
+    
 }
 
 #pragma mark - Set how items show and dismiss
-- (void)showWithView:(calloutItemView *)view idx:(NSUInteger)idx initDelay:(CGFloat)initDelay centerY:(CGFloat)y{
+- (void)showWithView:(calloutItemView *)view idx:(NSUInteger)idx initDelay:(CGFloat)initDelay centerY:(CGFloat)y
+{
     [UIView animateWithDuration:0.7
                           delay:(initDelay + idx*0.08f)
          usingSpringWithDamping:0.6
@@ -533,15 +534,16 @@ typedef enum {
                         options:UIViewAnimationOptionCurveEaseInOut
                      animations:^{
                          //                        view.layer.transform = CATransform3DIdentity;
-//                         view.center = CGPointMake(view.center.x,y);
-//                         view.layer.transform = CATransform3DMakeScale(1.2, 1.2, 1);
+                         //                         view.center = CGPointMake(view.center.x,y);
+                         //                         view.layer.transform = CATransform3DMakeScale(1.2, 1.2, 1);
                          view.backgroundColor = [UIColor clearColor];
                          view.alpha = 1.0;
                      }
                      completion:nil];
 }
 
-- (void)dismissWithView:(calloutItemView *)view idx:(NSUInteger)idx initDelay:(CGFloat)initDelay centerY:(CGFloat)y{
+- (void)dismissWithView:(calloutItemView *)view idx:(NSUInteger)idx initDelay:(CGFloat)initDelay centerY:(CGFloat)y
+{
     [UIView animateWithDuration:0.7
                           delay:(initDelay - idx*0.08f)
          usingSpringWithDamping:0.6
@@ -561,6 +563,7 @@ typedef enum {
 - (void)handlePan:(UIPanGestureRecognizer *)recognizer
 {
     if(_itemsShowed) return;
+    
     if(_initalSelfCenterY == 0.0){
         _initalSelfCenterY = recognizer.view.center.y;
         _initalBackgroundCenterY = _backgroundView.center.y;
@@ -570,6 +573,7 @@ typedef enum {
     CGPoint translation = [recognizer translationInView:self.view];
     //we cannot pull the view down at the beginning;
     if((!_dragInProgress)){
+        
         if( _progress == 0 && translation.y >0) {
             NSLog(@"drag down");
             _dragDirection = dragdown;
@@ -591,20 +595,20 @@ typedef enum {
             //                                         recognizer.view.center.y + translation.y);
             if(_dragDirection == dragUp){
                 if(_viewPresentedType == viewPresentedTypeMiddle){
-                _progress +=  -translation.y / 300;
-                
-                //when pull the view down after pulling up，the progress cannot be < 0
-                _progress = _progress >= 0 ? _progress : 0;
-                
-                _frontView.center = CGPointMake(_frontView.center.x , _initalFrontCenterY - 400 * _progress);
-                _frontView.alpha = 0.2 + _progress ;
-                
-                _backgroundView.center = CGPointMake(_backgroundView.center.x ,_initalBackgroundCenterY - 175 * _progress);
-//                _backgroundView.alpha = 1.2 - _progress ;
-                _headerView.alpha = 1.0 - _progress;
+                    _progress +=  -translation.y / 300;
+                    
+                    //when pull the view down after pulling up，the progress cannot be < 0
+                    _progress = _progress >= 0 ? _progress : 0;
+                    
+                    _frontView.center = CGPointMake(_frontView.center.x , _initalFrontCenterY - 400 * _progress);
+                    _frontView.alpha = 0.2 + _progress ;
+                    
+                    _backgroundView.center = CGPointMake(_backgroundView.center.x ,_initalBackgroundCenterY - 175 * _progress);
+                    //                _backgroundView.alpha = 1.2 - _progress ;
+                    _headerView.alpha = 1.0 - _progress;
                     _button.alpha = 1.0 - _progress;
                 }
-//                NSLog(@"drag up,_progress:%f",_progress);
+                //                NSLog(@"drag up,_progress:%f",_progress);
             }else{
                 if(_viewPresentedType == viewPresentedTypeDown){
                     
@@ -615,21 +619,21 @@ typedef enum {
                     _frontView.alpha = 1.0 - _progress/2;
                     
                     _backgroundView.center = CGPointMake(_backgroundView.center.x ,_initalBackgroundCenterY + 120 * _progress);
-//                    _backgroundView.alpha = _backgroundView.alpha + _progress/100 ;
-
+                    //                    _backgroundView.alpha = _backgroundView.alpha + _progress/100 ;
+                    
                     _headerView.alpha = 0.0 + _progress/1.5;
                     _button.alpha = 0.0 + _progress/1.5;
-//                    NSLog(@"drag down,_frontView.alpha:%f",_frontView.alpha);
+                    //                    NSLog(@"drag down,_frontView.alpha:%f",_frontView.alpha);
                 }else{
-                _progress +=  translation.y / 300;
-                _progress = _progress >= 0 ? _progress : 0;
-                
-                _frontView.center = CGPointMake(_frontView.center.x ,_initalFrontCenterY + 120 * _progress);
-                
-                _backgroundView.center = CGPointMake(_backgroundView.center.x , _initalBackgroundCenterY + 120 * _progress);
-                _backgroundView.alpha = 1.2 - _progress ;
-                _headerView.alpha = 1.0 - _progress;
-            }
+                    _progress +=  translation.y / 300;
+                    _progress = _progress >= 0 ? _progress : 0;
+                    
+                    _frontView.center = CGPointMake(_frontView.center.x ,_initalFrontCenterY + 120 * _progress);
+                    
+                    _backgroundView.center = CGPointMake(_backgroundView.center.x , _initalBackgroundCenterY + 120 * _progress);
+                    _backgroundView.alpha = 1.2 - _progress ;
+                    _headerView.alpha = 1.0 - _progress;
+                }
                 
             }
             break;
@@ -649,45 +653,44 @@ typedef enum {
             
             if(_dragDirection == dragUp){
                 
-            if (_progress >0.6) {
-                
-                 _viewPresentedType = viewPresentedTypeDown;
-                
-                [UIView animateWithDuration:0.5
-                                      delay:0.0
-                                    options:UIViewAnimationOptionCurveEaseInOut
-                                 animations:^{
-                                     _backgroundView.frame = CGRectMake(0, -175, CGRectGetWidth(_backgroundView.frame), CGRectGetHeight(_backgroundView.frame));
-                                      _frontView.frame = CGRectMake(0, 117, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds));
-//                                     _backgroundView.alpha = 0.2;
-                                     _headerView.alpha = 0.0;
-                                     _button.alpha = 0.0;
-                                 } completion:^(BOOL finished) {
-                                     _initalFrontCenterY = _frontView.center.y;
-                                     _initalBackgroundCenterY = _backgroundView.center.y;
-                                     NSLog(@"_backgroundView originY:%f",_backgroundView.frame.origin.y);
-                                 }];
-                
-                [self loadWebView:_url];
-                
-            }else{
-                [UIView animateWithDuration:1.2
-                                      delay:0.0
-                     usingSpringWithDamping:0.5
-                      initialSpringVelocity:1.0
-                                    options:UIViewAnimationOptionCurveEaseInOut
-                                 animations:^{
-                                     _backgroundView.center = CGPointMake(_backgroundView.center.x, _initalBackgroundCenterY);
-//                                     _backgroundView.alpha = 1.0;
-                                      _frontView.center = CGPointMake(_frontView.center.x, _initalFrontCenterY);
-                                     _frontView.alpha = 0.2;
-                                     _headerView.alpha = 1.0;
-                                 } completion:^(BOOL finished) {
-                                 }];
+                if (_progress >0.6) {
+                    _viewPresentedType = viewPresentedTypeDown;
+                    
+                    [UIView animateWithDuration:0.5
+                                          delay:0.0
+                                        options:UIViewAnimationOptionCurveEaseInOut
+                                     animations:^{
+                                         _backgroundView.frame = CGRectMake(0, -175, CGRectGetWidth(_backgroundView.frame), CGRectGetHeight(_backgroundView.frame));
+                                         _frontView.frame = CGRectMake(0, 117, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds));
+                                         //                                     _backgroundView.alpha = 0.2;
+                                         _headerView.alpha = 0.0;
+                                         _button.alpha = 0.0;
+                                     } completion:^(BOOL finished) {
+                                         _initalFrontCenterY = _frontView.center.y;
+                                         _initalBackgroundCenterY = _backgroundView.center.y;
+                                         NSLog(@"_backgroundView originY:%f",_backgroundView.frame.origin.y);
+                                     }];
+                    
+                    [self loadWebView:_url];
+                    
+                }else{
+                    [UIView animateWithDuration:1.2
+                                          delay:0.0
+                         usingSpringWithDamping:0.5
+                          initialSpringVelocity:1.0
+                                        options:UIViewAnimationOptionCurveEaseInOut
+                                     animations:^{
+                                         _backgroundView.center = CGPointMake(_backgroundView.center.x, _initalBackgroundCenterY);
+                                         //                                     _backgroundView.alpha = 1.0;
+                                         _frontView.center = CGPointMake(_frontView.center.x, _initalFrontCenterY);
+                                         _frontView.alpha = 0.2;
+                                         _headerView.alpha = 1.0;
+                                     } completion:^(BOOL finished) {
+                                     }];
                 }
-                
             }else{
                 if (_progress >0.6) {
+                    
                     _viewPresentedType = viewPresentedTypeMiddle;
                     [UIView animateWithDuration:0.5
                                           delay:0.0
@@ -695,7 +698,7 @@ typedef enum {
                                      animations:^{
                                          _backgroundView.frame = CGRectMake(0, 0, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds));
                                          _frontView.frame = CGRectMake(0, 500, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds)*2);
-//                                         _backgroundView.alpha = 1.0;
+                                         //                                         _backgroundView.alpha = 1.0;
                                          _headerView.alpha = 1.0;
                                          _frontView.alpha = 0.2;
                                          _button.alpha = 1.0;
@@ -713,16 +716,16 @@ typedef enum {
                                         options:UIViewAnimationOptionCurveEaseInOut
                                      animations:^{
                                          _backgroundView.center = CGPointMake(_backgroundView.center.x, _initalBackgroundCenterY);
-//                                         _backgroundView.alpha = 0.2;
+                                         //                                         _backgroundView.alpha = 0.2;
                                          _frontView.center = CGPointMake(_frontView.center.x, _initalFrontCenterY);
                                          _frontView.alpha = 1.0;
                                          _headerView.alpha = 0.0;
-                                          _button.alpha = 0.0;
+                                         _button.alpha = 0.0;
                                      } completion:^(BOOL finished) {
                                      }];
                 }
             }
-
+            
             _progress = 0.0;
             _dragInProgress = NO;
             break;
@@ -746,9 +749,9 @@ typedef enum {
     if(!_itemsShowed){
         CGPoint touchPoint = [recognizer locationInView:_contentView];
         
-         if (CGRectContainsPoint(_text1.frame, touchPoint)) {
-             [self loadWebView:_url];
-         }
+        if (CGRectContainsPoint(_text1.frame, touchPoint)) {
+            [self loadWebView:_url];
+        }
     }else{
         NSInteger tapIndex = [self indexOfTap:[recognizer locationInView:_itemsView]];
         
@@ -840,26 +843,26 @@ typedef enum {
     
     [self share];
     
-//    if ([self.delegate respondsToSelector:@selector(sidebar:didTapItemAtIndex:)]) {
-//        [self.delegate sidebar:self didTapItemAtIndex:index];
-//    }
-//    if ([self.delegate respondsToSelector:@selector(sidebar:didEnable:itemAtIndex:)]) {
-//        [self.delegate sidebar:self didEnable:didEnable itemAtIndex:index];
-//    }
+    //    if ([self.delegate respondsToSelector:@selector(sidebar:didTapItemAtIndex:)]) {
+    //        [self.delegate sidebar:self didTapItemAtIndex:index];
+    //    }
+    //    if ([self.delegate respondsToSelector:@selector(sidebar:didEnable:itemAtIndex:)]) {
+    //        [self.delegate sidebar:self didEnable:didEnable itemAtIndex:index];
+    //    }
 }
 
 #pragma mark  load webView
 - (void)loadWebView:(NSString *)url
 {
     //load webView only if the url changes.
-    if(![_webViewLoadedURL isEqualToString:url])
-    {
+    if(![_webViewLoadedURL isEqualToString:url]){
         _webViewLoadedURL = [url copy];
         
         _webView = [[UIWebView alloc] initWithFrame:_frontView.bounds];
         _webView.delegate = self;
         NSURLRequest *request =[NSURLRequest requestWithURL:[NSURL URLWithString:_webViewLoadedURL]];
         [_frontView addSubview: _webView];
+        
         [_webView loadRequest:request];
     }
 }
@@ -870,12 +873,15 @@ typedef enum {
     UIView *view = [[UIView alloc] initWithFrame:_frontView.bounds];
     [view setTag:108];
     [view setBackgroundColor:[UIColor clearColor]];
+    
     UIImage *blurImage = [_contentView screenshot];
     blurImage = [blurImage applyBlurWithRadius:5 tintColor:nil saturationDeltaFactor:1.8 maskImage:nil];
     UIImageView *blurView = [[UIImageView alloc] initWithImage:blurImage];
     [view addSubview:blurView];
+    
     view.alpha = 0.0;
     [self.view addSubview:view];
+    
     [UIView animateWithDuration:0.3 animations:^{
         view.alpha = 1.0;
     } completion:^(BOOL finished) {
@@ -895,7 +901,7 @@ typedef enum {
     UIView *view = (UIView *)[self.view viewWithTag:108];
     [UIView animateWithDuration:0.7 animations:^{
         view.alpha = 0.0;
-//        _webView.alpha = 1.0;
+        //        _webView.alpha = 1.0;
     } completion:^(BOOL finished) {
         [view removeFromSuperview];
     }];
@@ -914,7 +920,7 @@ typedef enum {
 - (void)share
 {
     GetMessageFromWXResp* resp = [[GetMessageFromWXResp alloc] init];
-    resp.text = [NSString stringWithFormat:@"王康和姚彬的demo分享给您"] ;
+    resp.text = [NSString stringWithFormat:@"来自于Stan和Sara的demo"] ;
     
     WXMediaMessage *message = [WXMediaMessage message];
     [message setThumbImage:_imageView.image];
@@ -929,7 +935,6 @@ typedef enum {
     message.mediaObject = ext;
     
     resp.message = message;
-    
     resp.bText = NO;
     
     [WXApi sendResp:resp];
