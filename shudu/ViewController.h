@@ -8,8 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import "networkManager.h"
+#import "WXApiObject.h"
+#import "WXApi.h"
 
-@interface ViewController : UIViewController<networkDelegate,UIWebViewDelegate>
+@interface ViewController : UIViewController<networkDelegate,UIWebViewDelegate,WXApiDelegate>
 
 - (void)getNetworkInfo;
 @end

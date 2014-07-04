@@ -12,6 +12,7 @@
 #import "UIImageView+WebCache.h"
 #import "defines.h"
 
+
 typedef enum {
     dragUp = 0,
     dragdown
@@ -23,9 +24,9 @@ typedef enum {
     viewPresentedTypeDown
 } viewPresentedType;
 
-@implementation UIView (rn_Screenshot)
+@implementation UIView (Screenshot)
 
-- (UIImage *)rn_screenshot {
+- (UIImage *)screenshot {
     UIGraphicsBeginImageContext(self.bounds.size);
     if([self respondsToSelector:@selector(drawViewHierarchyInRect:afterScreenUpdates:)]){
         [self drawViewHierarchyInRect:self.bounds afterScreenUpdates:NO];
@@ -222,6 +223,7 @@ typedef enum {
     
     NSString *_url;
     NSString *_webViewLoadedURL;
+    NSString *_stroyTitle;
     
     networkManager *_networkInstance;
     NSUserDefaults *_userDefaults;
@@ -269,7 +271,7 @@ typedef enum {
 //    _backgroundView.layer.shadowRadius = 10;
 //    _backgroundView.layer.shadowColor = [UIColor blackColor].CGColor;
 //    _backgroundView.layer.shadowOffset = CGSizeMake(-3, 3);
-    _imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 182, 100, 100)];
+    _imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 183, 100, 100)];
     [self setImageView:[_userDefaults objectForKey:WKLastImgUrl]];
     
     _title = [[UILabel alloc] init];
@@ -331,15 +333,15 @@ typedef enum {
                         [UIColor colorWithWhite:0.7 alpha:1],
                         [UIColor colorWithWhite:0.7 alpha:1]
                         ];
-    _images = @[[UIImage imageNamed:@"icon_plist_webexball"],
-                [UIImage imageNamed:@"icon_plist_webexball"],
-                [UIImage imageNamed:@"icon_plist_webexball"],
-                [UIImage imageNamed:@"icon_plist_webexball"]];
+    _images = @[[UIImage imageNamed:@"hi_61"],
+                [UIImage imageNamed:@"hi_85"],
+                [UIImage imageNamed:@"hi_83"],
+                [UIImage imageNamed:@"hi_81"]];
     
     _itemsView = [[UIView alloc] initWithFrame:CGRectMake(0, 400, 300, 45)];
     [_backgroundView addSubview:_itemsView];
     
-    _button = [[FRDLivelyButton alloc] initWithFrame:CGRectMake(20,10, 25, 25)];
+    _button = [[FRDLivelyButton alloc] initWithFrame:CGRectMake(20,12, 25, 25)];
     [_button setOptions:@{ kFRDLivelyButtonLineWidth: @(2.0f),
                            kFRDLivelyButtonHighlightedColor: [UIColor colorWithRed:0.5 green:0.8 blue:1.0 alpha:1.0],
                            kFRDLivelyButtonColor: [UIColor blackColor]
@@ -355,7 +357,7 @@ typedef enum {
         view.clipsToBounds = YES;
         view.imageView.image = image;
         
-        CGRect frame = CGRectMake(70 + idx * 50, 0 , 45, 45);
+        CGRect frame = CGRectMake(65 + idx * 60, 0 , 55, 55);
         view.frame = frame;
         view.layer.cornerRadius = frame.size.width/2.f;
         view.originalBackgroundColor = [UIColor clearColor];
@@ -423,13 +425,13 @@ typedef enum {
     }
     
      dispatch_async(dispatch_get_main_queue(), ^{
-         NSString *title = info[@"title"];
+         _stroyTitle = info[@"title"];
          _url            = info[@"url"];
-         NSLog(@"WKLastTitle:%@, title:%@",[_userDefaults objectForKey:WKLastTitle],title);
+         NSLog(@"WKLastTitle:%@, title:%@",[_userDefaults objectForKey:WKLastTitle],_stroyTitle);
 
-         if(title ){
+         if(_stroyTitle ){
             _title.frame = CGRectMake(110, 150, 200, 120);
-            [_title setText:title];
+            [_title setText:_stroyTitle];
             _title.font = [UIFont boldSystemFontOfSize:20];
             _title.numberOfLines = 3;
          }
@@ -649,8 +651,6 @@ typedef enum {
                 
             if (_progress >0.6) {
                 
-                [self loadWebView:_url];
-                
                  _viewPresentedType = viewPresentedTypeDown;
                 
                 [UIView animateWithDuration:0.5
@@ -668,6 +668,8 @@ typedef enum {
                                      NSLog(@"_backgroundView originY:%f",_backgroundView.frame.origin.y);
                                  }];
                 
+                [self loadWebView:_url];
+                
             }else{
                 [UIView animateWithDuration:1.2
                                       delay:0.0
@@ -681,9 +683,9 @@ typedef enum {
                                      _frontView.alpha = 0.2;
                                      _headerView.alpha = 1.0;
                                  } completion:^(BOOL finished) {
-                                     
                                  }];
                 }
+                
             }else{
                 if (_progress >0.6) {
                     _viewPresentedType = viewPresentedTypeMiddle;
@@ -836,6 +838,8 @@ typedef enum {
         [circleShape addAnimation:animation forKey:nil];
     }
     
+    [self share];
+    
 //    if ([self.delegate respondsToSelector:@selector(sidebar:didTapItemAtIndex:)]) {
 //        [self.delegate sidebar:self didTapItemAtIndex:index];
 //    }
@@ -847,7 +851,7 @@ typedef enum {
 #pragma mark  load webView
 - (void)loadWebView:(NSString *)url
 {
-    //load webView only if ther url changes.
+    //load webView only if the url changes.
     if(![_webViewLoadedURL isEqualToString:url])
     {
         _webViewLoadedURL = [url copy];
@@ -866,7 +870,7 @@ typedef enum {
     UIView *view = [[UIView alloc] initWithFrame:_frontView.bounds];
     [view setTag:108];
     [view setBackgroundColor:[UIColor clearColor]];
-    UIImage *blurImage = [_contentView rn_screenshot];
+    UIImage *blurImage = [_contentView screenshot];
     blurImage = [blurImage applyBlurWithRadius:5 tintColor:nil saturationDeltaFactor:1.8 maskImage:nil];
     UIImageView *blurView = [[UIImageView alloc] initWithImage:blurImage];
     [view addSubview:blurView];
@@ -904,6 +908,78 @@ typedef enum {
     UIView *view = (UIView *)[self.view viewWithTag:108];
     [view removeFromSuperview];
     NSLog(@"webViewdidFailLoadWithError");
+}
+
+#pragma mark Share - WeiXin
+- (void)share
+{
+    GetMessageFromWXResp* resp = [[GetMessageFromWXResp alloc] init];
+    resp.text = [NSString stringWithFormat:@"王康和姚彬的demo分享给您"] ;
+    
+    WXMediaMessage *message = [WXMediaMessage message];
+    [message setThumbImage:_imageView.image];
+    message.description=_stroyTitle;
+    NSLog(@"message.description:%@",message.description);
+    
+    WXImageObject *ext = [WXImageObject object];
+    //     NSString *filePath = [[NSBundle mainBundle] pathForResource:@"bird-dead@2x" ofType:@"png"];
+    //     ext.imageData = [NSData dataWithContentsOfFile:filePath];
+    NSData *dataObj = UIImageJPEGRepresentation([self.view screenshot], 0.75);
+    ext.imageData = dataObj;
+    message.mediaObject = ext;
+    
+    resp.message = message;
+    
+    resp.bText = NO;
+    
+    [WXApi sendResp:resp];
+    
+    //    NSArray *activities = @[FString(@"My high score is %d!\n",(int)[[JFUser localUser] bestScore]), [NSURL URLWithString:@"https://itunes.apple.com/us/app/id123123123123"]];
+    //    UIActivityViewController *shareVC = [[UIActivityViewController alloc] initWithActivityItems:activities applicationActivities:nil];
+    //
+    //    NSArray *excludeActivities = @[UIActivityTypeAssignToContact, UIActivityTypeCopyToPasteboard, UIActivityTypePostToWeibo, UIActivityTypePrint, UIActivityTypeAirDrop, UIActivityTypeAddToReadingList];
+    //    shareVC.excludedActivityTypes = excludeActivities;
+    //
+    //    [self.scene.view.window.rootViewController presentViewController:shareVC animated:YES completion:^{
+    //    //    self.shareLabel.fontColor = [UIColor whiteColor];
+    //    }];
+    
+    //    OWTwitterActivity *twitterActivity = [[OWTwitterActivity alloc] init];
+    //    OWMailActivity *mailActivity = [[OWMailActivity alloc] init];
+    //    OWPrintActivity *printActivity = [[OWPrintActivity alloc] init];
+    //    OWCopyActivity *copyActivity = [[OWCopyActivity alloc] init];
+    //
+    //    NSMutableArray *activities = [NSMutableArray arrayWithObject:mailActivity];
+    //
+    //    if( [OWWeChatActivity isWeChatInstalled] )
+    //    {
+    //        OWWeChatActivity *wechatSessionActivity = [[OWWeChatActivity alloc] initWithAppId:WECHAT_APP_ID messageType:WXMessageTypeTextscene:WXSceneSession];
+    //        OWWeChatActivity *wechatTimeLineActivity = [[OWWeChatActivity alloc] initWithAppId:WECHAT_APP_ID messageType:WXMessageTypeTextscene:WXSceneTimeline];
+    //        [activities addObjectsFromArray:@[wechatSessionActivity,wechatTimeLineActivity]];
+    //    }
+    //    if ([MFMessageComposeViewController canSendText]) {
+    //        OWMessageActivity *messageActivity = [[OWMessageActivity alloc] init];
+    //        [activities addObject:messageActivity];
+    //    }
+    //
+    //    [activities addObjectsFromArray:@[twitterActivity]];
+    //
+    //    if( NSClassFromString (@"UIActivityViewController") ) {
+    //        // ios 6, add facebook and sina weibo activities
+    //        OWFacebookActivity *facebookActivity = [[OWFacebookActivity alloc] init];
+    //        OWSinaWeiboActivity *sinaWeiboActivity = [[OWSinaWeiboActivity alloc] init];
+    //        [activities addObjectsFromArray:@[
+    //                                          facebookActivity, sinaWeiboActivity
+    //                                          ]];
+    //    }
+    //
+    //    [activities addObjectsFromArray:@[
+    //                                      copyActivity, printActivity]];
+    //
+    //    OWActivityViewController *activityViewController = [[OWActivityViewController alloc] initWithViewController:self activities:activities];
+    //    activityViewController.userInfo = @{@"text": mstr};
+    //
+    //    [activityViewController presentFromRootViewController];
 }
 
 #pragma mark didReceiveMemoryWarning
