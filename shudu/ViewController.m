@@ -221,6 +221,7 @@ typedef enum {
     BOOL _itemsShowed;
     
     NSString *_url;
+    NSString *_webViewLoadedURL;
     
     networkManager *_networkInstance;
     NSUserDefaults *_userDefaults;
@@ -235,7 +236,7 @@ typedef enum {
     [self setNeedsStatusBarAppearanceUpdate];
      _userDefaults = [NSUserDefaults standardUserDefaults];
     _contentView = [[UIView alloc] initWithFrame:self.view.bounds];
-    _contentView.backgroundColor = [UIColor blueColor];
+//    _contentView.backgroundColor = [UIColor blueColor];
     [self.view addSubview:_contentView];
     
     _scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
@@ -246,7 +247,7 @@ typedef enum {
     
     CGRect frontViewRect = CGRectMake(0, 500, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds)*2);
     _frontView = [[UIView alloc] initWithFrame:frontViewRect];
-    _frontView.backgroundColor = [UIColor yellowColor];
+//    _frontView.backgroundColor = [UIColor yellowColor];
     _frontView.alpha = 0.2;
 //    _frontView.layer.shadowOpacity = 0.5;
 //    _frontView.layer.shadowRadius = 10;
@@ -390,6 +391,8 @@ typedef enum {
         ViewController *strongSelf = wself;
         [strongSelf onApplicationFinishedLaunching];
     });
+    
+    _webViewLoadedURL = nil;
 }
 
 #pragma mark - Lazy Loading
@@ -490,6 +493,7 @@ typedef enum {
             _text.alpha   *= 0.2;
             _title.alpha  *= 0.2;
             _header.alpha *= 0.2;
+            _imageView.alpha *=0.2;
         }];
     }
 }
@@ -513,6 +517,7 @@ typedef enum {
         _text.alpha  = _lastTextAlpha;
         _title.alpha = _lastTitleAlpha;
         _header.alpha = _lastHeaderAlpha;
+        _imageView.alpha = _lastText1Alpha;
     }];
 
 }
@@ -592,9 +597,10 @@ typedef enum {
                 _frontView.center = CGPointMake(_frontView.center.x , _initalFrontCenterY - 400 * _progress);
                 _frontView.alpha = 0.2 + _progress ;
                 
-                _backgroundView.center = CGPointMake(_backgroundView.center.x ,_initalBackgroundCenterY - 120 * _progress);
-                _backgroundView.alpha = 1.2 - _progress ;
+                _backgroundView.center = CGPointMake(_backgroundView.center.x ,_initalBackgroundCenterY - 175 * _progress);
+//                _backgroundView.alpha = 1.2 - _progress ;
                 _headerView.alpha = 1.0 - _progress;
+                    _button.alpha = 1.0 - _progress;
                 }
 //                NSLog(@"drag up,_progress:%f",_progress);
             }else{
@@ -607,9 +613,10 @@ typedef enum {
                     _frontView.alpha = 1.0 - _progress/2;
                     
                     _backgroundView.center = CGPointMake(_backgroundView.center.x ,_initalBackgroundCenterY + 120 * _progress);
-                    _backgroundView.alpha = _backgroundView.alpha + _progress/100 ;
+//                    _backgroundView.alpha = _backgroundView.alpha + _progress/100 ;
 
                     _headerView.alpha = 0.0 + _progress/1.5;
+                    _button.alpha = 0.0 + _progress/1.5;
 //                    NSLog(@"drag down,_frontView.alpha:%f",_frontView.alpha);
                 }else{
                 _progress +=  translation.y / 300;
@@ -642,11 +649,7 @@ typedef enum {
                 
             if (_progress >0.6) {
                 
-                _webView = [[UIWebView alloc] initWithFrame:_frontView.bounds];
-                _webView.delegate = self;
-                NSURLRequest *request =[NSURLRequest requestWithURL:[NSURL URLWithString:_url]];
-                [_frontView addSubview: _webView];
-                [_webView loadRequest:request];
+                [self loadWebView:_url];
                 
                  _viewPresentedType = viewPresentedTypeDown;
                 
@@ -654,10 +657,11 @@ typedef enum {
                                       delay:0.0
                                     options:UIViewAnimationOptionCurveEaseInOut
                                  animations:^{
-                                     _backgroundView.frame = CGRectMake(0, -165, CGRectGetWidth(_backgroundView.frame), CGRectGetHeight(_backgroundView.frame));
-                                      _frontView.frame = CGRectMake(0, 130, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds));
-                                     _backgroundView.alpha = 0.2;
+                                     _backgroundView.frame = CGRectMake(0, -175, CGRectGetWidth(_backgroundView.frame), CGRectGetHeight(_backgroundView.frame));
+                                      _frontView.frame = CGRectMake(0, 117, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds));
+//                                     _backgroundView.alpha = 0.2;
                                      _headerView.alpha = 0.0;
+                                     _button.alpha = 0.0;
                                  } completion:^(BOOL finished) {
                                      _initalFrontCenterY = _frontView.center.y;
                                      _initalBackgroundCenterY = _backgroundView.center.y;
@@ -672,7 +676,7 @@ typedef enum {
                                     options:UIViewAnimationOptionCurveEaseInOut
                                  animations:^{
                                      _backgroundView.center = CGPointMake(_backgroundView.center.x, _initalBackgroundCenterY);
-                                     _backgroundView.alpha = 1.0;
+//                                     _backgroundView.alpha = 1.0;
                                       _frontView.center = CGPointMake(_frontView.center.x, _initalFrontCenterY);
                                      _frontView.alpha = 0.2;
                                      _headerView.alpha = 1.0;
@@ -689,9 +693,10 @@ typedef enum {
                                      animations:^{
                                          _backgroundView.frame = CGRectMake(0, 0, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds));
                                          _frontView.frame = CGRectMake(0, 500, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds)*2);
-                                         _backgroundView.alpha = 1.0;
+//                                         _backgroundView.alpha = 1.0;
                                          _headerView.alpha = 1.0;
                                          _frontView.alpha = 0.2;
+                                         _button.alpha = 1.0;
                                      } completion:^(BOOL finished) {
                                          _initalFrontCenterY = _frontView.center.y;
                                          _initalBackgroundCenterY = _backgroundView.center.y;
@@ -706,10 +711,11 @@ typedef enum {
                                         options:UIViewAnimationOptionCurveEaseInOut
                                      animations:^{
                                          _backgroundView.center = CGPointMake(_backgroundView.center.x, _initalBackgroundCenterY);
-                                         _backgroundView.alpha = 0.2;
+//                                         _backgroundView.alpha = 0.2;
                                          _frontView.center = CGPointMake(_frontView.center.x, _initalFrontCenterY);
                                          _frontView.alpha = 1.0;
                                          _headerView.alpha = 0.0;
+                                          _button.alpha = 0.0;
                                      } completion:^(BOOL finished) {
                                      }];
                 }
@@ -739,12 +745,7 @@ typedef enum {
         CGPoint touchPoint = [recognizer locationInView:_contentView];
         
          if (CGRectContainsPoint(_text1.frame, touchPoint)) {
-             _webView = [[UIWebView alloc] initWithFrame:_frontView.bounds];
-             _webView.delegate = self;
-             NSURLRequest *request =[NSURLRequest requestWithURL:[NSURL URLWithString:_url]];
-             [_frontView addSubview: _webView];
-             [_webView loadRequest:request];
-//             _webView.alpha = 0.0;
+             [self loadWebView:_url];
          }
     }else{
         NSInteger tapIndex = [self indexOfTap:[recognizer locationInView:_itemsView]];
@@ -841,6 +842,22 @@ typedef enum {
 //    if ([self.delegate respondsToSelector:@selector(sidebar:didEnable:itemAtIndex:)]) {
 //        [self.delegate sidebar:self didEnable:didEnable itemAtIndex:index];
 //    }
+}
+
+#pragma mark  load webView
+- (void)loadWebView:(NSString *)url
+{
+    //load webView only if ther url changes.
+    if(![_webViewLoadedURL isEqualToString:url])
+    {
+        _webViewLoadedURL = [url copy];
+        
+        _webView = [[UIWebView alloc] initWithFrame:_frontView.bounds];
+        _webView.delegate = self;
+        NSURLRequest *request =[NSURLRequest requestWithURL:[NSURL URLWithString:_webViewLoadedURL]];
+        [_frontView addSubview: _webView];
+        [_webView loadRequest:request];
+    }
 }
 
 #pragma mark  webView delegate
