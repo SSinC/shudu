@@ -191,8 +191,9 @@ typedef enum {
     UIView *_upView;
     UIView *_itemsView;
     UIView *_contentView;
-    UIImageView *_imageView;
-    UIScrollView *_scrollView;
+    UIImageView    *_imageView;
+    UIScrollView   *_scrollView;
+    NSMutableArray *_scrollViewArray;
     
     float _progress;
     float _initalSelfCenterY;
@@ -230,6 +231,7 @@ typedef enum {
     
     UIActivityIndicatorView *_webViewActivityIndicatorView;
     UIWebView *_webView;
+    BOOL _shouldWebViewBluredViewShow;
 }
 
 - (void)viewDidLoad
@@ -257,7 +259,7 @@ typedef enum {
     //    _frontView.layer.shadowOffset = CGSizeMake(-3, 3);
     _text = [[UILabel alloc] initWithFrame:CGRectMake(30, 0, 230, 160)];
     _text.numberOfLines = 7;
-    [_text setText:@"Sthew rhsytre wtgregsdfggf dgfsdhgr\nwesd fgsdfgsd fgsdfggsf dgergfsgfdgr\negssfgsdf gsdgfsdfgfd\nyhtdshrt ejhdfthdrtyjk erdtyjdf\nfhdfthfg hddrthd fthfthgfh\nfdhjdfgh rthdtf hdfg\ndfgjt hsthhdfgh\ndf ghdfghdfghs ertfrqwaf"];
+//    [_text setText:@"Sthew rhsytre wtgregsdfggf dgfsdhgr\nwesd fgsdfgsd fgsdfggsf dgergfsgfdgr\negssfgsdf gsdgfsdfgfd\nyhtdshrt ejhdfthdrtyjk erdtyjdf\nfhdfthfg hddrthd fthfthgfh\nfdhjdfgh rthdtf hdfg\ndfgjt hsthhdfgh\ndf ghdfghdfghs ertfrqwaf"];
     [_text setTextColor:[UIColor blackColor]];
     _text.font = [UIFont boldSystemFontOfSize:13];
     //    [labelCity setFont:[UIFont fontWithName:@"HelveticaNeue-UltraLight" size:25]];
@@ -395,6 +397,12 @@ typedef enum {
     _webViewLoadedURL = nil;
 }
 
+#pragma mark - viewWillAppear
+- (void)viewWillAppear:(BOOL)animated
+{
+    
+}
+
 #pragma mark - Lazy Loading
 - (void)onApplicationFinishedLaunching
 {
@@ -422,9 +430,9 @@ typedef enum {
         [self setImageView:info[@"imageUrl"]];
     }
     
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_main_sync_safe(^{
         _stroyTitle = info[@"title"];
-        _url            = info[@"url"];
+        _url        = info[@"url"];
         NSLog(@"WKLastTitle:%@, title:%@",[_userDefaults objectForKey:WKLastTitle],_stroyTitle);
         
         if(_stroyTitle ){
@@ -437,6 +445,9 @@ typedef enum {
             _text1.frame = CGRectMake(115, 215, 180, 100);
             _text1.numberOfLines = 2;
             [_text1 setText:_url];
+            
+            [self loadWebView:_url];
+            _shouldWebViewBluredViewShow = NO;
         }
     });
     
@@ -634,7 +645,6 @@ typedef enum {
                     _backgroundView.alpha = 1.2 - _progress ;
                     _headerView.alpha = 1.0 - _progress;
                 }
-                
             }
             break;
         }
@@ -672,6 +682,7 @@ typedef enum {
                                      }];
                     
                     [self loadWebView:_url];
+                    _shouldWebViewBluredViewShow = YES;
                     
                 }else{
                     [UIView animateWithDuration:1.2
@@ -874,10 +885,12 @@ typedef enum {
     [view setTag:108];
     [view setBackgroundColor:[UIColor clearColor]];
     
-    UIImage *blurImage = [_contentView screenshot];
-    blurImage = [blurImage applyBlurWithRadius:5 tintColor:nil saturationDeltaFactor:1.8 maskImage:nil];
-    UIImageView *blurView = [[UIImageView alloc] initWithImage:blurImage];
-    [view addSubview:blurView];
+    if(_shouldWebViewBluredViewShow){
+        UIImage *blurImage = [_contentView screenshot];
+        blurImage = [blurImage applyBlurWithRadius:5 tintColor:nil saturationDeltaFactor:1.8 maskImage:nil];
+        UIImageView *blurView = [[UIImageView alloc] initWithImage:blurImage];
+        [view addSubview:blurView];
+    }
     
     view.alpha = 0.0;
     [self.view addSubview:view];
