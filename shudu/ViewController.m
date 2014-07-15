@@ -11,6 +11,7 @@
 #import "FRDLivelyButton.h"
 #import "UIImageView+WebCache.h"
 #import "defines.h"
+#import "iRate.h"
 
 
 typedef enum {
@@ -226,7 +227,7 @@ typedef enum {
     NSString *_webViewLoadedURL;
     NSString *_stroyTitle;
     
-    networkManager *_networkInstance;
+//    networkManager *_networkInstance;
     NSUserDefaults *_userDefaults;
     
     UIActivityIndicatorView *_webViewActivityIndicatorView;
@@ -411,16 +412,23 @@ typedef enum {
      Netwokr weather instance
      *************************************/
     [self getNetworkInfo];
+    
+//    //enable preview mode
+    [iRate sharedInstance].previewMode = YES;
+//
+//    //prevent automatic prompt
+    [iRate sharedInstance].promptAtLaunch = NO;
+    [iRate sharedInstance].delegate = self;
+
+    [iRate sharedInstance].usesUntilPrompt = 5;
 }
 
 #pragma mark - getNetworkInfo
 - (void)getNetworkInfo
 {
-    if(!_networkInstance){
-        _networkInstance = [networkManager sharedInstance];
-        _networkInstance.delegate = self;
-    }
-    [_networkInstance getNetworkInfo:@"http://news-at.zhihu.com/api/3/news/latest"];
+    [networkManager sharedInstance].delegate = self;
+    
+    [[networkManager sharedInstance] getNetworkInfo:@"http://news-at.zhihu.com/api/3/news/latest"];
     ////http://news-at.zhihu.com/api/3/news/hot;
 }
 
@@ -684,6 +692,8 @@ typedef enum {
                     [self loadWebView:_url];
                     _shouldWebViewBluredViewShow = YES;
                     
+                    [[iRate sharedInstance] promptIfNetworkAvailable];
+
                 }else{
                     [UIView animateWithDuration:1.2
                                           delay:0.0

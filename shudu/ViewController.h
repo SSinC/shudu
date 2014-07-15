@@ -10,8 +10,9 @@
 #import "networkManager.h"
 #import "WXApiObject.h"
 #import "WXApi.h"
+#import "iRate.h"
 
-@interface ViewController : UIViewController<networkDelegate,UIWebViewDelegate,WXApiDelegate>
+@interface ViewController : UIViewController<networkDelegate,UIWebViewDelegate,WXApiDelegate,iRateDelegate>
 
 - (void)getNetworkInfo;
 @end
